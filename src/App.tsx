@@ -3,6 +3,7 @@ import Projects from './components/Projects';
 import Contacts from './components/Contacts';
 import Introduction from './components/Introduction';
 import NavBar from './components/NavBar';
+import Education from './components/Education';
 import './App.css';
 
 const App = () => {
@@ -17,6 +18,9 @@ const App = () => {
       <div className='projects'>
         <Projects />
       </div>
+      <div className='education'>
+        <Education />
+      </div> 
       <div className='contacts'>
         <Contacts />
       </div>      

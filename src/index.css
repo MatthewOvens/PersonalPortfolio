@@ -32,11 +32,31 @@ p {
 }
 
 .fourth-color {
-  color: #20242a;
+  color: #C20114;
 }
 
 .fifth-color {
   color: #FCFCFC;
+}
+
+.first-color-background {
+  background-color: #2a2e36;
+}
+
+.second-color-background {
+  background-color: #ffa000;
+}
+
+.third-color-background {
+  background-color: #000411;
+}
+
+.fourth-color-background {
+  background-color: #C20114;
+}
+
+.fifth-color-background {
+  background-color: #FCFCFC;
 }
 
 a {

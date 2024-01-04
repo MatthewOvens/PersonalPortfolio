@@ -53,12 +53,18 @@
 
 .introduction {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position: block;
+}
+
+.projects {
+  position: block;
+}
+
+.education {
+  position: block;
 }
 
 .contacts {
   height: 5000px;
+  position: block;
 }

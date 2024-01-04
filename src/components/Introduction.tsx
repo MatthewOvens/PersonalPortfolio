@@ -1,10 +1,19 @@
 //import React from 'react';
+import './Introduction.css';
 
 const Introduction = () => {
   return (
     <div>
-      <h2>Introduction</h2>
-      <p>Your introduction text goes here.</p>
+      <div className='personalImg'>
+        <img src="https://avatars.githubusercontent.com/u/83605999?v=4" alt="profile" className="profilePicture"/>
+      </div>
+      <div className='presentation'>
+        <h1>Nice to meet you!</h1>
+        <h3>I'm Matteo, a</h3>
+        <div className="infiniteSliderContainer">
+          <h2 className='infiniteSlider'>Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designerProva • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer</h2>
+        </div>  
+      </div>
     </div>
   );
 };

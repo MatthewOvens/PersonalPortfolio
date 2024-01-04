@@ -1,8 +1,9 @@
 #root {
-  max-width: 1280px;
+  width: 100%;
+  /*max-width: 1280px;*/
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  overflow: hidden; /* Hide scrollbars */
 }
 
 .logo {
@@ -39,4 +40,25 @@
 
 .read-the-docs {
   color: #888;
+}
+
+
+.navbar {
+  height: 3em;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.introduction {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.contacts {
+  height: 5000px;
 }

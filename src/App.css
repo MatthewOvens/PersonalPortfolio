@@ -49,6 +49,8 @@
   top: 0;
   left: 0;
   z-index: 1;
+  background-color: #2A2E36;
+  border-bottom: 1px solid #FCFCFC;
 }
 
 .introduction {

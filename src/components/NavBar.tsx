@@ -6,14 +6,8 @@ import './NavBar.css';
 const NavBar = () => {
   return (
     <div className='navbarcontainer'>
-      <Navbar.Brand href="#home">
-        <img
-            src="/img/logo.svg"
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-            alt="React Bootstrap logo"
-          />
+      <Navbar.Brand className='logo-temp' href="#home">
+        MF
       </Navbar.Brand>
       <Nav className="me-auto">
         <Nav.Link className='navBarLink' href="#home">Home</Nav.Link>

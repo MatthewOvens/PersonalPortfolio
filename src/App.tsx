@@ -12,18 +12,18 @@ const App = () => {
       <div className='navbar'>
         <NavBar/>
       </div>
-      <div className='introduction'>
+      <div className='introduction' id='home'>
         <Introduction />
       </div>
-      <div className='projects'>
+      <div className='projects' id='projects'>
         <Projects />
       </div>
-      <div className='education'>
+      <div className='education' id='education'>
         <Education />
       </div> 
-      <div className='contacts'>
+      <div className='contacts' id='contacts'>
         <Contacts />
-      </div>      
+      </div>
     </div>
   );
 };

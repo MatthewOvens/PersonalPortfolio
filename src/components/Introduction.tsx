@@ -3,7 +3,7 @@ import './Introduction.css';
 
 const Introduction = () => {
   return (
-    <div className='container'>
+    <div className='containerIntro'>
       <div className='personalImg'>
         <img src="https://avatars.githubusercontent.com/u/83605999?v=4" alt="profile" className="profilePicture"/>
       </div>

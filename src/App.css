@@ -42,13 +42,13 @@
   color: #888;
 }
 
-
 .navbar {
-  height: 3em;
+  height: 5em;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 .introduction {

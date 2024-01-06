@@ -1,21 +1,38 @@
 import React from 'react';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import './NavBar.css';
 
 const NavBar = () => {
   return (
-    <nav>
-      <ul>
-        <li>
-          <a href="#introduction">Introduction</a>
-        </li>
-        <li>
-          <a href="#projects">Projects</a>
-        </li>
-        <li>
-          <a href="#contacts">Contacts</a>
-        </li>
-      </ul>
-    </nav>
+    <div className='navbarcontainer'>
+      <Navbar.Brand href="#home">
+        <img
+            src="/img/logo.svg"
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt="React Bootstrap logo"
+          />
+      </Navbar.Brand>
+      <Nav className="me-auto">
+        <Nav.Link className='navBarLink' href="#home">Home</Nav.Link>
+        <Nav.Link className='navBarLink' href="#projects">Projects</Nav.Link>
+        <Nav.Link className='navBarLink' href="#education">Education</Nav.Link>
+        <Nav.Link className='navBarLink' href="#contacts">Contacts</Nav.Link>
+      </Nav>
+    </div>
   );
 };
 
 export default NavBar;
+
+/*
+<img
+              src="/img/logo.svg"
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+              alt="React Bootstrap logo"
+            />
+*/

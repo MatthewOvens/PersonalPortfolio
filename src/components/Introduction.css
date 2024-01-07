@@ -57,3 +57,9 @@
     right : 7%;
     bottom: 7%;
 }
+
+.textSuggestion {
+    position: absolute;
+    bottom: 8%;
+    right: 13%;
+}

@@ -5,6 +5,7 @@ import Introduction from './components/Introduction';
 import NavBar from './components/NavBar';
 import Education from './components/Education';
 import './App.css';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -23,6 +24,9 @@ const App = () => {
       </div> 
       <div className='contacts' id='contacts'>
         <Contacts />
+      </div>
+      <div className='footer'>
+        <Footer />
       </div>
     </div>
   );

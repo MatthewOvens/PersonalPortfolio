@@ -43,12 +43,13 @@
 }
 
 .navbar {
-  height: 5em;
+  height: 10vh;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1;
+  color: #FCFCFC;
   background-color: #2A2E36;
   border-bottom: 1px solid #FCFCFC;
 }
@@ -56,17 +57,23 @@
 .introduction {
   height: 100vh;
   position: block;
+  color: #FCFCFC;
 }
 
 .projects {
   position: block;
+  background-color: #FCFCFC;
+  color: #000411;
+  height: 100vh;
 }
 
 .education {
   position: block;
+  height: 100vh;
 }
 
 .contacts {
-  height: 5000px;
   position: block;
+  height: 100vh;
+  background-color: #FCFCFC;
 }

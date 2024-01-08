@@ -1,0 +1,81 @@
+.projectsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 80%;
+}
+
+
+/*
+@keyframes glowing {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }  
+
+.projectBox::before {
+    content: "";
+    position: absolute;
+    width: 40%;
+    height: 150%;
+    background: rgb(199,170,170);
+    background: linear-gradient(180deg, rgba(199,170,170,1) 0%, rgba(194,1,16,1) 0%, rgba(255,160,0,1) 100%);
+    background: -webkit-linear-gradient(180deg, rgba(199,170,170,1) 0%, rgba(194,1,16,1) 0%, rgba(255,160,0,1) 100%);
+    animation: glowing01 5s linear infinite;
+    transform-origin: center;
+    animation: glowing 5s linear infinite;
+}
+*/
+
+.projectBox {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    width: 30%;
+    margin: 5px 10px 5px 10px;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 10px 0px,
+    rgba(0, 0, 0, 0.5) 0px 2px 25px 0px;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        transform: scale(1.02);
+        cursor: pointer;
+    }
+}
+
+.projectBox:hover {
+    .projectImage {
+        opacity: 0.2;
+    }
+    .projectTxt {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.projectImage {
+    width: 96%;
+    z-index: 5;
+    border-radius: 15px;
+    object-fit: contain;
+    transition: all 0.2s;
+}
+
+.projectTxt {   
+    position: absolute;
+    margin: auto;
+    height: 200px;
+    top: 0; left: 0; bottom: 0; right: 0;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: 0.3s ease-in-out;
+    z-index: 2;
+    font-weight: 600;
+}

@@ -48,7 +48,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 10;
   color: #FCFCFC;
   background-color: #2A2E36;
   border-bottom: 1px solid #FCFCFC;
@@ -61,19 +61,17 @@
 }
 
 .projects {
+  padding-top: 50px;
   position: block;
   background-color: #FCFCFC;
   color: #000411;
-  height: 100vh;
 }
 
 .education {
   position: block;
-  height: 100vh;
 }
 
 .contacts {
   position: block;
-  height: 100vh;
   background-color: #FCFCFC;
 }

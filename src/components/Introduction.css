@@ -19,10 +19,12 @@
     100% { transform: translate(-100%, 0); }
 }
 
+/*
 .infiniteSlider:hover {
     animation-play-state: paused;
     cursor: grab;
 }
+*/
 
 .personalImg {
     margin-right: 5%;
@@ -49,17 +51,38 @@
     height: 100%;
 }
 
+.handRecInfo {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 .handRecButton {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    position: fixed;
-    right : 7%;
-    bottom: 7%;
+    z-index: 20;
 }
 
 .textSuggestion {
-    position: absolute;
-    bottom: 8%;
-    right: 13%;
+    display: flex;
+    flex-direction: row;
+    margin-top: -15px;
+}
+
+#arrow {
+    stroke-dasharray: 10;
+    
+}
+
+@keyframes arrowSign {
+    from {
+        stroke-dashoffset: 48;
+    }
+    to {
+         stroke-dashoffset: 0;
+     }
 }

@@ -1,4 +1,3 @@
-//import React from 'react';
 import Projects from './components/Projects';
 import Contacts from './components/Contacts';
 import Introduction from './components/Introduction';

@@ -10,6 +10,27 @@
     margin-right: 50px;
 }
 
-.logo-temp {
+.my-logo {
     margin-left: 50px;
+    margin-top: 5px;
+}
+
+.my-logo:hover {
+
+    .logoSign {
+        stroke-dasharray: 281;
+        stroke-dashoffset: 281;
+        animation: logoAnimation 3s linear;
+        cursor: pointer;
+    }
+
+}
+
+@keyframes logoAnimation {
+    from {
+        stroke-dashoffset: 281;
+    }
+    to {
+         stroke-dashoffset: 0;
+     }
 }

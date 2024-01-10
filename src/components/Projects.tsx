@@ -19,8 +19,8 @@ const Projects = () => {
               <div key={index} className="projectBox">
                 <img src={val.image} className='projectImage'/>
                 <div className='projectTxt'>
-                  <h3 style={{fontWeight:'600'}}>{val.title}</h3>
-                  <span style={{fontSize:'large'}}>{val.description}</span> 
+                  <h3 style={{fontWeight:'600', color:'#2a2e36'}}>{val.title}</h3>
+                  <span style={{fontSize:'large', color:'#2a2e36'}}>{val.description}</span> 
                 </div>
               </div>
             </>

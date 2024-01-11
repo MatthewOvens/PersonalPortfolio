@@ -9,8 +9,8 @@ const Projects = () => {
   return (
     <>
       <div className='description'>
-        <h1>Projects</h1>
-        <h3>Explore my diverse portfolio showcasing a fusion of technical implementations and creative design ideas</h3>
+        <h1 className="third-color">Projects</h1>
+        <h3 className="third-color">Explore my diverse portfolio showcasing a fusion of technical implementations and creative design ideas</h3>
       </div>
       <div className="projectsContainer">
         {projectData.map((val, index) => {

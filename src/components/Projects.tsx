@@ -1,10 +1,15 @@
 import "./Projects.css";
 import projectData from "../assets/data/ProjectsData";
+import { Button, Modal } from "react-bootstrap";
+import ProjectDialog from "./ProjectDialog";
+import React from "react";
 
 const Projects = () => {
 
   console.log("projectData");
   console.log(projectData);
+
+  const [modalShow, setModalShow] = React.useState(false);
 
   return (
     <>
@@ -27,6 +32,14 @@ const Projects = () => {
            );
         })}
       </div>
+      <Button variant="primary" onClick={() => setModalShow(true)}>
+        Launch vertically centered modal
+      </Button>
+
+      <ProjectDialog
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
     </>
   );
 };

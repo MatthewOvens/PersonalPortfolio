@@ -3,13 +3,15 @@ import Contacts from './components/Contacts';
 import Introduction from './components/Introduction';
 import NavBar from './components/NavBar';
 import Education from './components/Education';
-import './App.css';
 import Footer from './components/Footer';
+import './App.css';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
     <div>
-      <div className='navbar'>
+      <div className='mynavbar'>
         <NavBar/>
       </div>
       <div className='introduction' id='home'>

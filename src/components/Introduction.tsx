@@ -11,7 +11,7 @@ const Introduction = () => {
         <h1>Nice to meet you!</h1>
         <h3>I'm Matteo, a</h3>
         <div className="infiniteSliderContainer second-color-background first-color">
-          <h2 className='infiniteSlider'>Prova • Frontend developer • UX designer • Interactive Designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designerProva • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer</h2>
+          <h4 className='infiniteSlider'>Prova • Frontend developer • UX designer • Interactive Designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designer • Creative Innovator • Prova • Frontend developer • UX designerProva • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer • UX designer • Creative Innovator Prova • Frontend developer</h4>
         </div>  
       </div>
       <div className='handRecInfo'>

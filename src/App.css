@@ -42,8 +42,8 @@
   color: #888;
 }
 
-.navbar {
-  height: 10vh;
+.mynavbar {
+  height: 80px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -58,10 +58,11 @@
   height: 100vh;
   position: block;
   color: #FCFCFC;
+  background-color: #2A2E36;
 }
 
 .projects {
-  padding-top: 50px;
+  padding-top: 30px;
   position: block;
   background-color: #FCFCFC;
   color: #000411;
@@ -74,4 +75,5 @@
 .contacts {
   position: block;
   background-color: #FCFCFC;
+  padding-top: 30px;
 }

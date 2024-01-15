@@ -2,10 +2,9 @@
 
 const Footer = () => {
     return (
-      <div>
-        <h2>Footer</h2>
-        <p>Your Footer information goes here.</p>
-        <i className="bi bi-github rounded-3 bg-primary"></i>
+      <div style={{padding:"10px 0 10px 0"}}>
+        <div>© 2024 Matteo Fornara</div>
+        <div>Paris, France</div>
       </div>
     );
   };

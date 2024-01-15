@@ -1,48 +1,49 @@
-import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { ProjectData } from '../assets/data/ProjectsData';
+import './ProjectDialog.css';
 
 interface ProjectDialogProps {
     show: boolean;
     onHide: any;
+    projectData: ProjectData | null;
 }
 
 const ProjectDialog = (props : ProjectDialogProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-
+/*     const [isOpen, setIsOpen] = useState(false);
+ */    
+    /* 
     const openDialog = () => {
         setIsOpen(true);
     };
 
     const closeDialog = () => {
         setIsOpen(false);
-    };
+    }; */
 
     return (
         <>
             <Modal
                 {...props}
-                size="lg"
+                size="xl"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
                 >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                    Modal heading
+                    {props.projectData?.title}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <h4>Centered Modal</h4>
-                    <p>
-                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-                    dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                    </p>
+                <Modal.Body className='content'>
+                    <div>
+                        <img src={props.projectData?.image[0]} className='projectImage'/>
+                    </div>
+                    <h3>{props.projectData?.description}</h3>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={props.onHide}>Close</Button>
                 </Modal.Footer>
-                </Modal>
+            </Modal>
         </>
     );
 };

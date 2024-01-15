@@ -1,15 +1,21 @@
 import "./Projects.css";
-import projectData from "../assets/data/ProjectsData";
-import { Button, Modal } from "react-bootstrap";
+import projectData, { ProjectData } from "../assets/data/ProjectsData";
+import { Button } from "react-bootstrap";
 import ProjectDialog from "./ProjectDialog";
-import React from "react";
+import { useState } from "react";
 
 const Projects = () => {
 
   console.log("projectData");
   console.log(projectData);
 
-  const [modalShow, setModalShow] = React.useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<ProjectData|null>(null);
+
+  function openModal(index: number) {
+    setModalShow(true);
+    setSelectedProject(projectData[index]);
+  } 
 
   return (
     <>
@@ -21,8 +27,8 @@ const Projects = () => {
         {projectData.map((val, index) => {
           return (
             <>
-              <div key={index} className="projectBox">
-                <img src={val.image} className='projectImage'/>
+              <div key={index} className="projectBox" onClick={() => openModal(index)}>
+                <img src={val.image[0]} className='projectImage'/>
                 <div className='projectTxt'>
                   <h3 style={{fontWeight:'600', color:'#2a2e36'}}>{val.title}</h3>
                   <span style={{fontSize:'large', color:'#2a2e36'}}>{val.description}</span> 
@@ -32,13 +38,11 @@ const Projects = () => {
            );
         })}
       </div>
-      <Button variant="primary" onClick={() => setModalShow(true)}>
-        Launch vertically centered modal
-      </Button>
 
       <ProjectDialog
         show={modalShow}
         onHide={() => setModalShow(false)}
+        projectData={selectedProject}
       />
     </>
   );

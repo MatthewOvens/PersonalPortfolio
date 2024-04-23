@@ -45,7 +45,6 @@
     rgba(0, 0, 0, 0.5) 0px 2px 25px 0px;
     transition: all 0.3s ease-in-out;
     &:hover {
-        transform: scale(1.02);
         cursor: pointer;
     }
 }

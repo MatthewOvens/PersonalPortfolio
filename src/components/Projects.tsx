@@ -1,6 +1,5 @@
 import "./Projects.css";
 import projectData, { ProjectData } from "../assets/data/ProjectsData";
-import { Button } from "react-bootstrap";
 import ProjectDialog from "./ProjectDialog";
 import { useState } from "react";
 

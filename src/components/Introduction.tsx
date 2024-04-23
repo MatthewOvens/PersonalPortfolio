@@ -1,4 +1,4 @@
-//import React from 'react';
+
 import './Introduction.css';
 
 const Introduction = () => {
@@ -35,5 +35,3 @@ const Introduction = () => {
 };
 
 export default Introduction;
-
-// 

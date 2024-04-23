@@ -106,9 +106,6 @@ button {
   cursor: pointer;
   transition: .2s ease-in-out 0s;
 }
-button:hover {
-  transform: scale(1.10);
-}
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

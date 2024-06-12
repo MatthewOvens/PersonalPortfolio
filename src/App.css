@@ -62,23 +62,32 @@
 }
 
 .projects {
-  padding-top: 30px;
+  padding-top: 50px;
   position: block;
   background-color: #FCFCFC;
   color: #000411;
 }
 
 .education {
+  padding-top: 50px;
   position: block;
 }
 
 .contacts {
   position: block;
   background-color: #FCFCFC;
-  padding-top: 30px;
+  padding-top: 50px;
 }
 
 .footer {
   background-color: #2A2E36;
   color: #FCFCFC;
+}
+
+.canvas {
+  position: fixed;
+  background-color: red;
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
 }

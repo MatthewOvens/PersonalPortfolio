@@ -13,6 +13,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.button-secondary {
+  background-color: #ffa000;
+  color: #000411;
+  border: none;
+  min-width: 150px;
+  min-height: 50px;
+  &:hover {
+    background-color: #2a2e36;
+    color: #FCFCFC;
+  }
+}
+
 p {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

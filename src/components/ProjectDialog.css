@@ -1,20 +1,59 @@
-.content1 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 1rem;
-    margin: 0 1rem;
-    background-color: blue;
-}
-
+.content2,
 .content1 {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     padding: 0 1rem;
     margin: 0 1rem;
+    
+}
+.content2 {
+    background-color: blue;
+}
+.content1 {
     background-color: red;
+}
+
+.content3 {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    margin: 0 1rem;
+    align-content: center;
+    background-color: green;
+}
+
+.skillstitle {
+    align-self: center;
+}
+
+.skillsss {
+    
+    background-color: red;    
+}
+
+.takeaways {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.skill {
+    align-content: center;
+    width: fit-content;
+    height: 3rem;
+    transition: all 0.3s ease-in-out;
+    margin: 0.5rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    &:hover {
+        transform: scale(1.2);
+    }
 }
 
 .location {
@@ -28,4 +67,9 @@
 
 .image1 {
     width: 100%;
+}
+
+.closeButton {
+    cursor: pointer;
+    background-color: red !important;
 }

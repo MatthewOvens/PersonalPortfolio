@@ -10,6 +10,12 @@ interface ProjectDialogProps {
 }
 
 const ProjectDialog = (props : ProjectDialogProps) => {
+
+    console.log("ProjectDialog.tsx")
+    console.log(props.projectData)
+    console.log(props.show)
+    console.log(props.onHide)
+
 /*     const [isOpen, setIsOpen] = useState(false);
  */    
     /* 
@@ -45,14 +51,22 @@ const ProjectDialog = (props : ProjectDialogProps) => {
                         <h3>{props.projectData?.description}</h3>
                     </div>
                     <div className='content2'>
+                        <h3>{props.projectData?.description}</h3>
                         <div className='image1Container'>
                             <img src={props.projectData?.image[0]} className='image1'/>
                         </div>
-                        <h3>{props.projectData?.description}</h3>
+                    </div>
+                    <div className='content3'>
+                        <h3 className='skillstitle'>Acquired Skills</h3>
+                        <div className='takeaways'>
+                            {props.projectData?.acquired_skills?.map(skill => (
+                                <div className='skill first-color second-color-background'>{skill}</div>
+                            ))}
+                        </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={props.onHide}>Close</Button>
+                    <Button className='button-secondary' onClick={props.onHide}>Close</Button>
                 </Modal.Footer>
             </Modal>
         </>

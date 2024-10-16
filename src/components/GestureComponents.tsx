@@ -21,6 +21,14 @@ const GestureComponent = (props: GestureComponentProps) => {
     var results: any = undefined;
     const videoHeight = "100vh";
     const videoWidth = "100vw";
+
+    // Variables to store initial coordinates and dragging state
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    // Add variables to track the simulated "press" state
+    let isTouching = false;
     
     const model: GestureModel = new GestureModel();
 
@@ -28,8 +36,6 @@ const GestureComponent = (props: GestureComponentProps) => {
 
     // Excecuted every time the video change
     useEffect(() => {
-        console.log("GestureComponent")
-        console.log(video)
         if (video && gestureRecognizer == null) {
             createGestureRecognizer().then(() => {
                 video?.addEventListener("loadeddata", predictWebcam);
@@ -77,7 +83,6 @@ const GestureComponent = (props: GestureComponentProps) => {
 
                 // Calculate and log the percentage of completion
                 const percentage = ((currentRetry + 1) / maxRetries) * 100;
-                console.log("Loading progress: " + percentage.toFixed(2) + "%");
 
                 currentRetry++;
 
@@ -100,7 +105,6 @@ const GestureComponent = (props: GestureComponentProps) => {
      */
     const predictWebcam = () => {
         // Start detecting the stream
-        console.log("Predicting webcam");
         if (gestureRecognizer) {
             setupCanvas();
             if (video && video.videoHeight > 0 && video.videoWidth > 0) {
@@ -137,13 +141,12 @@ const GestureComponent = (props: GestureComponentProps) => {
     const drawHands = () => {
         const drawingUtils = new DrawingUtils(canvasCtx);
         if (results && results.landmarks) {
-            console.log("Drawing hands");
             for (const landmarks of results.landmarks) {
                 drawingUtils.drawConnectors(
                     landmarks,
                     GestureRecognizer.HAND_CONNECTIONS,
                     {
-                        color: "#FFFFFF",
+                        color: "#FFDB58",
                         lineWidth: 5
                     }
                 );
@@ -171,7 +174,7 @@ const GestureComponent = (props: GestureComponentProps) => {
                 const handedness = results.handednesses[i][0].displayName;
 
                 detectAction(categoryName, handedness, results.landmarks[i]);
-                handleDrums(handedness, results.landmarks[i]);
+                handleClickGesture(handedness, results.landmarks[i]);
                 handlePlayPause();
             }
         }
@@ -186,27 +189,157 @@ const GestureComponent = (props: GestureComponentProps) => {
     }
 
     /**
-     * Function to handle "drums" effects. Mapped to each finger (through the relative landmark)
+     * Function to handle the click effect which is going to be performed when the user is pinching with their index finger
      */
-    const handleDrums = (handedness: string, landmarks: any) => {
-        //DRUMS detect and managing
-        if (handedness == "Right") {
+    const handleClickGestureOLD = (handedness: string, landmarks: any) => {
+        if (handedness === "Right" || handedness === "Left") {
             // Managing of the click over the coordinates where the gesture has been taken
-            // For example with the following I get the x coordinate of the 8th landmark
-            // landmarks[8].x
+            let finger = model.getFingerPinch(landmarks);
 
-            // Would be nice to be able to scroll with the pinch, hold while the thumb and index are close
+            if (finger === 'index') {
+                // Case in which the user is pinching with their index finger
+                let x = landmarks[8].x * 1000;
+                let y = landmarks[8].y * 1000;
 
-            // let current_gesture = document.getElementById('current_gesture') as HTMLOutputElement;
-            // current_gesture.innerText = "🥁 ✅";
+                console.log("Index finger pinching");
+
+                //window.scrollBy(0, 20);
+
+                if (!isDragging) {
+                    // If not dragging, start the drag
+                    isDragging = true;
+                    startX = x;
+                    startY = y;
+                } else {
+                    console.log("ELSE");
+                    console.log("Initial X: " + startX);
+                    console.log("Initial Y: " + startY);
+                    console.log("Second X: " + x);
+                    console.log("Second Y: " + y);
+
+                    // Calculate the movement
+                    let deltaX = x - startX;
+                    let deltaY = y - startY;
+
+                    // Update the page position based on the movement
+                    window.scrollBy(deltaX, deltaY);
+
+                    // Update the start coordinates for the next calculation
+                    startX = x;
+                    startY = y;
+                }
+            } else {
+                // Reset dragging state if the pinch gesture is not detected
+                isDragging = false;
+                console.log("Not dragging");
+            }
         }
+    };
+
+    function handleClickGesture(handedness: string, landmarks: any) {
+        
+        if (handedness === "Right" || handedness === "Left") {
+            let finger = model.getFingerPinch(landmarks);
+
+            if (finger === 'index') {
+                let x = landmarks[8].x * window.innerWidth;
+                let y = landmarks[8].y * window.innerHeight;
+    
+                if (!isDragging) {
+                    isDragging = true;
+                    startX = x;
+                    startY = y;
+    
+                    if (isTouchDevice()) {
+                        // Simulate touchstart for touch devices
+                        simulateTouchStart(x, y);
+                    }
+                    // No need for mouse down on desktop since we'll handle scrolling manually
+                } else {
+                    let deltaX = x - startX;
+                    let deltaY = y - startY;
+    
+                    if (isTouchDevice()) {
+                        simulateTouchMove(deltaX, deltaY);
+                    } else {
+                        // Manually scroll the page for non-touch devices
+                        window.scrollBy(-deltaX, -deltaY);  // Scroll the page by the movement delta
+                    }
+    
+                    startX = x;
+                    startY = y;
+                }
+            } else {
+                if (isDragging) {
+                    if (isTouchDevice()) {
+                        simulateTouchEnd(startX, startY);
+                    }
+                }
+    
+                isDragging = false;
+            }
+        }
+    }
+
+    // Check if the device supports touch events
+    function isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    }
+
+    // Simulate touch events for touch devices
+    function simulateTouchStart(x: number, y: number) {
+        const touchStartEvent = new TouchEvent('touchstart', {
+            touches: [new Touch({
+                identifier: Date.now(),
+                target: document.body,
+                clientX: x,
+                clientY: y,
+            })],
+            bubbles: true,
+            cancelable: true
+        });
+
+        document.body.dispatchEvent(touchStartEvent);
+        console.log("Simulated touchstart at:", x, y);
+    }
+
+    function simulateTouchMove(deltaX: number, deltaY: number) {
+        const touchMoveEvent = new TouchEvent('touchmove', {
+            touches: [new Touch({
+                identifier: Date.now(),
+                target: document.body,
+                clientX: startX + deltaX,
+                clientY: startY + deltaY,
+            })],
+            bubbles: true,
+            cancelable: true
+        });
+
+        document.body.dispatchEvent(touchMoveEvent);
+        console.log("Simulated touchmove with delta:", deltaX, deltaY);
+    }
+
+    function simulateTouchEnd(x: number, y: number) {
+        const touchEndEvent = new TouchEvent('touchend', {
+            changedTouches: [new Touch({
+                identifier: Date.now(),
+                target: document.body,
+                clientX: x,
+                clientY: y,
+            })],
+            bubbles: true,
+            cancelable: true
+        });
+
+        document.body.dispatchEvent(touchEndEvent);
+        console.log("Simulated touchend at:", x, y);
     }
 
     /**
      * Function to handle play/pause based on detected gestures (Closed_Fist)
      */
     const handlePlayPause = () => {
-        // Something to do with the first gesture
+        // Something to do with the fist gesture
 
         //Maybe take the click event in the moment with the other hand make the fist
     }

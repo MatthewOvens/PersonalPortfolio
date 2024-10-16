@@ -1,8 +1,9 @@
-import { CutState } from "../utils/GestureEnums";
+import { IndexState } from "../utils/GestureEnums";
 import { closedPoints } from "../utils/helpers";
 
 export class GestureModel {
-    currSCut: CutState = CutState.Empty;
+
+    currSIndex: IndexState = IndexState.Open;
 
     constructor() {
         console.log("In Gesture Model constructor")
@@ -16,14 +17,9 @@ export class GestureModel {
      * @param current_gesture Current recognized gesture
      */
     updateFSMStates(categoryName: string, handedness: string, landmarks: any, current_gesture: any) {
-        //console.log("In updateFSMStates")
-        //console.log(handedness)
-        //console.log(landmarks)
-        //console.log(current_gesture)
-        //console.log(categoryName)
+        // Each landmark is a point in the hand represented in the coordinates space
         switch (categoryName) {
             case "None":
-                console.log("None")
                 break;
             case "Pointing_Up":
                 
@@ -48,27 +44,13 @@ export class GestureModel {
         }
     }
 
-    getCutText() {
-        switch (this.currSCut) {
-            case CutState.StartCuttingLeft:
-                return "✌️ + 🤞 To Start Loop";
-            case CutState.ClosedCutLeft:
-                return "Left Cut ✅ → Complete Right Cut ✌️";
-            case CutState.CuttedLeft:
-                return "✌️ + 🤞 To Close Loop";
-            case CutState.StartCuttingRight:
-                return "✌️ + 🤞 To Close Loop";
-            case CutState.CuttedCompleted:
-                return "Loop created ✅ → ✌️ To Remove Loop";
-        }
-        return undefined;
-    }
-
-    getDrumSound(landmarks: any) {
+    getFingerPinch(landmarks: any) {
+        
         if (closedPoints(landmarks[8], landmarks[4], 0.05)) {
-            
+            this.currSIndex = IndexState.Closed;
+            return 'index';
         } else {
-            
+            this.currSIndex = IndexState.Open;
         }
 
         //Middle finger action

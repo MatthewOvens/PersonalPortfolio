@@ -101,3 +101,26 @@ button:hover{
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);
 }
+
+.hand-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 3px solid #B01EB0;
+  background-color: rgba(176, 30, 176, 0.15);
+  box-shadow: 0 0 12px rgba(176, 30, 176, 0.5);
+  pointer-events: none; /* so elementFromPoint hits the real page element */
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  transition: transform 90ms ease, background-color 90ms ease, border-color 90ms ease;
+  display: none; /* shown only while a hand is tracked */
+}
+
+.hand-cursor.clicking {
+  transform: translate(-50%, -50%) scale(0.65);
+  background-color: #B01EB0;
+  border-color: #FFDB58;
+}

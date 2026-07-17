@@ -40,11 +40,22 @@ const GestureComponent = (props: GestureComponentProps) => {
     // driven directly from how far the hand has moved since.
     const dragRef = useRef({ isDragging: false, anchorHandY: 0, anchorScrollY: 0 });
 
-    // One-Euro filters for the fingertip position (one per axis).
+    // One-Euro filter for the fingertip's vertical position (drives scrolling).
     const filterRef = useRef({
+        y: new OneEuroFilter(OE_MIN_CUTOFF, OE_BETA, OE_DCUTOFF),
+    });
+
+    // One-Euro filters for the pointer (palm-centre) position, one per axis.
+    const pointerFilterRef = useRef({
         x: new OneEuroFilter(OE_MIN_CUTOFF, OE_BETA, OE_DCUTOFF),
         y: new OneEuroFilter(OE_MIN_CUTOFF, OE_BETA, OE_DCUTOFF),
     });
+
+    // Live pointer state: current screen position + whether a fist is held.
+    const pointerRef = useRef({ x: 0, y: 0, fistHeld: false });
+
+    // The on-screen cursor element that follows the hand.
+    const cursorRef = useRef<HTMLDivElement>(null);
 
     // One-time diagnostic flags so we can see where the pipeline stops.
     const videoReadyLoggedRef = useRef(false);
@@ -211,9 +222,9 @@ const GestureComponent = (props: GestureComponentProps) => {
         const results = resultsRef.current;
 
         if (!results || !results.landmarks || results.landmarks.length === 0) {
-            // No hand on screen: end any in-progress drag so the next pinch
-            // starts fresh instead of jumping by a huge delta.
+            // No hand on screen: end any in-progress drag and hide the cursor.
             dragRef.current.isDragging = false;
+            hidePointer();
             return;
         }
 
@@ -222,17 +233,24 @@ const GestureComponent = (props: GestureComponentProps) => {
             console.log(`[GestureComponent] Hand detected — drawing skeleton (${results.landmarks.length} hand(s)).`);
         }
 
-        for (let i = 0; i < results.landmarks.length; i++) {
-            const landmarks = results.landmarks[i];
-            const handedness = results.handednesses?.[i]?.[0]?.displayName ?? "Right";
+        // Only one hand is tracked (numHands: 1).
+        const landmarks = results.landmarks[0];
+        const handedness = results.handednesses?.[0]?.[0]?.displayName ?? "Right";
+        const categoryName = results.gestures?.[0]?.[0]?.categoryName ?? "None";
 
+        // The cursor always follows the hand.
+        updatePointer(landmarks);
+
+        if (categoryName === "Closed_Fist") {
+            // Fist = click. Don't scroll while clicking.
+            dragRef.current.isDragging = false;
+            handleFistClick();
+        } else {
+            releaseFist();
             handleClickGesture(handedness, landmarks);
-
-            const gesture = results.gestures?.[i]?.[0];
-            if (gesture) {
-                detectAction(gesture.categoryName, handedness, landmarks);
-            }
         }
+
+        detectAction(categoryName, handedness, landmarks);
     }
 
     /**
@@ -281,8 +299,79 @@ const GestureComponent = (props: GestureComponentProps) => {
         window.scrollTo(0, target);
     }
 
+    /**
+     * Move the on-screen cursor to the centre of the palm. The X is mirrored to
+     * match the horizontally-flipped skeleton canvas (transform: rotateY(180deg)).
+     */
+    const updatePointer = (landmarks: any) => {
+        const cursor = cursorRef.current;
+        if (!cursor) return;
+
+        // Palm centre = average of the wrist and the four finger-base joints.
+        const palm = [0, 5, 9, 13, 17];
+        let cx = 0, cy = 0;
+        for (const idx of palm) {
+            cx += landmarks[idx].x;
+            cy += landmarks[idx].y;
+        }
+        cx /= palm.length;
+        cy /= palm.length;
+
+        const now = performance.now();
+        const x = pointerFilterRef.current.x.filter((1 - cx) * window.innerWidth, now);
+        const y = pointerFilterRef.current.y.filter(cy * window.innerHeight, now);
+
+        pointerRef.current.x = x;
+        pointerRef.current.y = y;
+
+        cursor.style.left = `${x}px`;
+        cursor.style.top = `${y}px`;
+        cursor.style.display = "block";
+    }
+
+    /** Hide the cursor and reset its filters when no hand is visible. */
+    const hidePointer = () => {
+        const cursor = cursorRef.current;
+        if (cursor) {
+            cursor.style.display = "none";
+            cursor.classList.remove("clicking");
+        }
+        pointerRef.current.fistHeld = false;
+        pointerFilterRef.current.x.reset();
+        pointerFilterRef.current.y.reset();
+    }
+
+    /** On the rising edge of a fist, dispatch a real click under the cursor. */
+    const handleFistClick = () => {
+        const state = pointerRef.current;
+        if (state.fistHeld) return; // wait for the hand to open before clicking again
+
+        state.fistHeld = true;
+        cursorRef.current?.classList.add("clicking");
+        clickAt(state.x, state.y);
+    }
+
+    /** Reset the fist state once the hand opens again. */
+    const releaseFist = () => {
+        if (!pointerRef.current.fistHeld) return;
+        pointerRef.current.fistHeld = false;
+        cursorRef.current?.classList.remove("clicking");
+    }
+
+    /** Dispatch a native click on whatever page element sits under the point. */
+    const clickAt = (x: number, y: number) => {
+        const target = document.elementFromPoint(x, y) as HTMLElement | null;
+        if (!target) return;
+
+        const opts: MouseEventInit = { bubbles: true, cancelable: true, clientX: x, clientY: y, view: window };
+        target.dispatchEvent(new MouseEvent("mousedown", opts));
+        target.dispatchEvent(new MouseEvent("mouseup", opts));
+        target.dispatchEvent(new MouseEvent("click", opts));
+    }
+
     return (
         <>
+            <div ref={cursorRef} className="hand-cursor" />
             <div>
                 <canvas className="output_canvas" id="output_canvas" width="1920" height="1080" />
             </div>

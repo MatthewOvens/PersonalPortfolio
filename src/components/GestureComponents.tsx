@@ -1,6 +1,7 @@
 import { DrawingUtils, FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
 import { GestureModel } from "../models/GestureModel";
-import { useEffect } from "react";
+import { OneEuroFilter } from "../utils/OneEuroFilter";
+import { useEffect, useRef } from "react";
 
 export interface Coordinates {
     x: number;
@@ -11,55 +12,80 @@ interface GestureComponentProps {
     video: HTMLVideoElement | null
 }
 
-const GestureComponent = (props: GestureComponentProps) => {
-    // Define a sensitivity value to control effect change speed
-    var video = props.video;
-    var gestureRecognizer: GestureRecognizer | null = null;
+// Pinch-scroll tuning.
+// One-Euro filter smooths the tracked fingertip: lower MIN_CUTOFF = steadier
+// when slow (less jitter); higher BETA = less lag when moving fast.
+const OE_MIN_CUTOFF = 1.0;
+const OE_BETA = 0.3;
+const OE_DCUTOFF = 1.0;
 
-    var canvasElement: any | null = null;
-    var canvasCtx: any | null = null;
-    var results: any = undefined;
+// Absolute "grab & drag" scrolling: while pinched, the page position tracks the
+// hand. SCROLL_GAIN = how many px the page moves per px of hand movement.
+const SCROLL_GAIN = 1.0;
+
+const GestureComponent = (props: GestureComponentProps) => {
+    const video = props.video;
+
+    // Mutable state lives in refs so it survives across renders/animation
+    // frames and stays reachable from the effect cleanup.
+    const gestureRecognizerRef = useRef<GestureRecognizer | null>(null);
+    const canvasElementRef = useRef<HTMLCanvasElement | null>(null);
+    const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+    const resultsRef = useRef<any>(undefined);
+    const rafIdRef = useRef<number | null>(null);
+    const modelRef = useRef<GestureModel>(new GestureModel());
+
+    // Pinch/drag state, kept across animation frames. On grab we record the
+    // hand's vertical position and the page's scroll offset; the page is then
+    // driven directly from how far the hand has moved since.
+    const dragRef = useRef({ isDragging: false, anchorHandY: 0, anchorScrollY: 0 });
+
+    // One-Euro filters for the fingertip position (one per axis).
+    const filterRef = useRef({
+        x: new OneEuroFilter(OE_MIN_CUTOFF, OE_BETA, OE_DCUTOFF),
+        y: new OneEuroFilter(OE_MIN_CUTOFF, OE_BETA, OE_DCUTOFF),
+    });
+
+    // One-time diagnostic flags so we can see where the pipeline stops.
+    const videoReadyLoggedRef = useRef(false);
+    const firstDetectionLoggedRef = useRef(false);
+
     const videoHeight = "100vh";
     const videoWidth = "100vw";
 
-    // Variables to store initial coordinates and dragging state
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-
-    // Add variables to track the simulated "press" state
-    let isTouching = false;
-    
-    const model: GestureModel = new GestureModel();
-
-    // var lastVideoTime: any = -1;
-
-    // Excecuted every time the video change
+    // Load the model once the webcam is available, then run the detection
+    // loop. Cleanup cancels the loop so unmounting (e.g. turning hand
+    // navigation off) doesn't leave a stray requestAnimationFrame running.
     useEffect(() => {
-        if (video && gestureRecognizer == null) {
-            createGestureRecognizer().then(() => {
-                video?.addEventListener("loadeddata", predictWebcam);
-                requestAnimationFrame(() => {
-                    predictWebcam();
-                });
-            });
-        }
+        if (!video) return;
+
+        let cancelled = false;
+
+        createGestureRecognizer().then(() => {
+            if (cancelled) return;
+            rafIdRef.current = requestAnimationFrame(predictWebcam);
+        });
+
+        return () => {
+            cancelled = true;
+            if (rafIdRef.current != null) {
+                cancelAnimationFrame(rafIdRef.current);
+                rafIdRef.current = null;
+            }
+        };
     }, [video]);
 
     /**
      * Function to create the gestureRecognizer and initialization of the regions (used to create loops in the music flow)
      */
     const createGestureRecognizer = async () => {
-        let recognizer = await loadModelWithRetry();
+        const recognizer = await loadModelWithRetry();
         if (recognizer) {
-            gestureRecognizer = recognizer;
-        }
-
-        if (!gestureRecognizer) {
+            gestureRecognizerRef.current = recognizer;
+            console.log("[GestureComponent] GestureRecognizer loaded, starting detection loop.");
+        } else {
             console.error("Model loading failed after all retry attempts.");
-            // Handle the failure case here
         }
-
     }
 
     async function loadModelWithRetry() {
@@ -69,7 +95,10 @@ const GestureComponent = (props: GestureComponentProps) => {
 
         while (currentRetry < maxRetries) {
             try {
-                const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm");
+                // Pin the WASM runtime to the installed JS package version so the
+                // glue code and the WASM binary stay API-compatible. An unversioned
+                // URL resolves to "latest" and can break createFromOptions.
+                const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
                 recognizer = await GestureRecognizer.createFromOptions(vision, {
                     baseOptions: {
                         modelAssetPath: "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task"
@@ -80,23 +109,16 @@ const GestureComponent = (props: GestureComponentProps) => {
                 break; // If loading is successful, exit the loop
             } catch (error) {
                 console.error("An error occurred on attempt #" + (currentRetry + 1) + ":", error);
-
-                // Calculate and log the percentage of completion
-                const percentage = ((currentRetry + 1) / maxRetries) * 100;
-
                 currentRetry++;
 
-                if (currentRetry < maxRetries) {
-                    // You can add a delay before the next retry if needed
-                    // await new Promise(resolve => setTimeout(resolve, retryDelayMilliseconds));
-                } else {
+                if (currentRetry >= maxRetries) {
                     console.error("Maximum retry attempts reached. Model loading failed.");
                     break; // Exit the loop if max retries are reached
                 }
             }
         }
 
-        return recognizer; // Return the loaded recognizer or null if all retries failed
+        return recognizer; // Return the loaded recognizer or undefined if all retries failed
     }
 
 
@@ -104,42 +126,59 @@ const GestureComponent = (props: GestureComponentProps) => {
      * Function to predict gestures from the webcam feed
      */
     const predictWebcam = () => {
-        // Start detecting the stream
-        if (gestureRecognizer) {
-            setupCanvas();
+        const recognizer = gestureRecognizerRef.current;
+        if (!recognizer) {
+            rafIdRef.current = requestAnimationFrame(predictWebcam);
+            return;
+        }
+
+        if (setupCanvas()) {
             if (video && video.videoHeight > 0 && video.videoWidth > 0) {
+                if (!videoReadyLoggedRef.current) {
+                    videoReadyLoggedRef.current = true;
+                    console.log(`[GestureComponent] Video ready: ${video.videoWidth}x${video.videoHeight}, running recognition.`);
+                }
                 try {
-                    results = gestureRecognizer.recognizeForVideo(video, Date.now());
+                    resultsRef.current = recognizer.recognizeForVideo(video, Date.now());
                 } catch (error) {
                     console.error(error);
                 }
             }
             drawHands();
             performAction();
-            requestAnimationFrame(() => {
-                predictWebcam();
-            });
-            // window.requestAnimationFrame(predictWebcam.bind(this));
         }
+
+        rafIdRef.current = requestAnimationFrame(predictWebcam);
     }
 
     const setupCanvas = () => {
-        if (canvasCtx == undefined) {
-            canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
-            canvasCtx = canvasElement.getContext("2d");
-            canvasElement.style.height = videoHeight;
-            canvasElement.style.width = videoWidth;
+        if (canvasCtxRef.current == null) {
+            const el = document.getElementById("output_canvas") as HTMLCanvasElement | null;
+            if (!el) return false;
+            canvasElementRef.current = el;
+            canvasCtxRef.current = el.getContext("2d");
+            el.style.height = videoHeight;
+            el.style.width = videoWidth;
         }
 
-        canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        const ctx = canvasCtxRef.current;
+        const el = canvasElementRef.current;
+        if (!ctx || !el) return false;
+
+        ctx.save();
+        ctx.clearRect(0, 0, el.width, el.height);
+        return true;
     }
 
     /**
      * Function to render the user's hands skeleton
      */
     const drawHands = () => {
-        const drawingUtils = new DrawingUtils(canvasCtx);
+        const ctx = canvasCtxRef.current;
+        const results = resultsRef.current;
+        if (!ctx) return;
+
+        const drawingUtils = new DrawingUtils(ctx);
         if (results && results.landmarks) {
             for (const landmarks of results.landmarks) {
                 drawingUtils.drawConnectors(
@@ -156,26 +195,42 @@ const GestureComponent = (props: GestureComponentProps) => {
                 });
             }
         }
-        canvasCtx.restore();
+        ctx.restore();
     }
 
     /**
-     * Function from which all the handles are called
+     * Function from which all the handles are called.
+     *
+     * Pinch-to-scroll is derived purely from hand landmarks, so it must run
+     * whenever a hand is visible — not only when the model reports a named
+     * gesture (a pinch is usually classified as "None", which previously left
+     * the scroll handler unreachable). Named-gesture actions still run only
+     * when the recognizer actually returns a gesture.
      */
     const performAction = () => {
-        if (results && results.gestures.length == 0) {
-            //let current_gesture = document.getElementById('current_gesture') as HTMLOutputElement;
-            //current_gesture.innerText = "🙌";
+        const results = resultsRef.current;
+
+        if (!results || !results.landmarks || results.landmarks.length === 0) {
+            // No hand on screen: end any in-progress drag so the next pinch
+            // starts fresh instead of jumping by a huge delta.
+            dragRef.current.isDragging = false;
+            return;
         }
 
-        if (results && results.gestures.length > 0) {
-            for (let i = 0; i < results.gestures.length; i++) {
-                const categoryName = results.gestures[i][0].categoryName;
-                const handedness = results.handednesses[i][0].displayName;
+        if (!firstDetectionLoggedRef.current) {
+            firstDetectionLoggedRef.current = true;
+            console.log(`[GestureComponent] Hand detected — drawing skeleton (${results.landmarks.length} hand(s)).`);
+        }
 
-                detectAction(categoryName, handedness, results.landmarks[i]);
-                handleClickGesture(handedness, results.landmarks[i]);
-                handlePlayPause();
+        for (let i = 0; i < results.landmarks.length; i++) {
+            const landmarks = results.landmarks[i];
+            const handedness = results.handednesses?.[i]?.[0]?.displayName ?? "Right";
+
+            handleClickGesture(handedness, landmarks);
+
+            const gesture = results.gestures?.[i]?.[0];
+            if (gesture) {
+                detectAction(gesture.categoryName, handedness, landmarks);
             }
         }
     }
@@ -184,164 +239,46 @@ const GestureComponent = (props: GestureComponentProps) => {
      * Function to detect the specific action returned by the model
      */
     const detectAction = (categoryName: string, handedness: string, landmarks: any) => {
-        //let current_gesture = document.getElementById('current_gesture') as HTMLOutputElement;
-        model.updateFSMStates(categoryName, handedness, landmarks, "current_gesture"); // To put proper gesture
+        modelRef.current.updateFSMStates(categoryName, handedness, landmarks, "current_gesture");
     }
 
     /**
      * Function to handle the click effect which is going to be performed when the user is pinching with their index finger
      */
-    const handleClickGestureOLD = (handedness: string, landmarks: any) => {
-        if (handedness === "Right" || handedness === "Left") {
-            // Managing of the click over the coordinates where the gesture has been taken
-            let finger = model.getFingerPinch(landmarks);
+    const handleClickGesture = (handedness: string, landmarks: any) => {
+        if (handedness !== "Right" && handedness !== "Left") return;
 
-            if (finger === 'index') {
-                // Case in which the user is pinching with their index finger
-                let x = landmarks[8].x * 1000;
-                let y = landmarks[8].y * 1000;
+        const drag = dragRef.current;
+        const filters = filterRef.current;
+        const finger = modelRef.current.getFingerPinch(landmarks);
 
-                console.log("Index finger pinching");
-
-                //window.scrollBy(0, 20);
-
-                if (!isDragging) {
-                    // If not dragging, start the drag
-                    isDragging = true;
-                    startX = x;
-                    startY = y;
-                } else {
-                    console.log("ELSE");
-                    console.log("Initial X: " + startX);
-                    console.log("Initial Y: " + startY);
-                    console.log("Second X: " + x);
-                    console.log("Second Y: " + y);
-
-                    // Calculate the movement
-                    let deltaX = x - startX;
-                    let deltaY = y - startY;
-
-                    // Update the page position based on the movement
-                    window.scrollBy(deltaX, deltaY);
-
-                    // Update the start coordinates for the next calculation
-                    startX = x;
-                    startY = y;
-                }
-            } else {
-                // Reset dragging state if the pinch gesture is not detected
-                isDragging = false;
-                console.log("Not dragging");
-            }
+        // Not pinching: release the grab and reset the filter for the next one.
+        if (finger !== 'index') {
+            drag.isDragging = false;
+            filters.y.reset();
+            return;
         }
-    };
 
-    function handleClickGesture(handedness: string, landmarks: any) {
-        
-        if (handedness === "Right" || handedness === "Left") {
-            let finger = model.getFingerPinch(landmarks);
+        // Smooth the fingertip's vertical position to remove tracking jitter.
+        const now = performance.now();
+        const handY = filters.y.filter(landmarks[8].y * window.innerHeight, now);
 
-            if (finger === 'index') {
-                let x = landmarks[8].x * window.innerWidth;
-                let y = landmarks[8].y * window.innerHeight;
-    
-                if (!isDragging) {
-                    isDragging = true;
-                    startX = x;
-                    startY = y;
-    
-                    if (isTouchDevice()) {
-                        // Simulate touchstart for touch devices
-                        simulateTouchStart(x, y);
-                    }
-                    // No need for mouse down on desktop since we'll handle scrolling manually
-                } else {
-                    let deltaX = x - startX;
-                    let deltaY = y - startY;
-    
-                    if (isTouchDevice()) {
-                        simulateTouchMove(deltaX, deltaY);
-                    } else {
-                        // Manually scroll the page for non-touch devices
-                        window.scrollBy(-deltaX, -deltaY);  // Scroll the page by the movement delta
-                    }
-    
-                    startX = x;
-                    startY = y;
-                }
-            } else {
-                if (isDragging) {
-                    if (isTouchDevice()) {
-                        simulateTouchEnd(startX, startY);
-                    }
-                }
-    
-                isDragging = false;
-            }
+        // First frame of a pinch: remember where the hand grabbed and where the
+        // page was, so movement from here maps to page movement.
+        if (!drag.isDragging) {
+            drag.isDragging = true;
+            drag.anchorHandY = handY;
+            drag.anchorScrollY = window.scrollY;
+            return;
         }
-    }
 
-    // Check if the device supports touch events
-    function isTouchDevice() {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    }
-
-    // Simulate touch events for touch devices
-    function simulateTouchStart(x: number, y: number) {
-        const touchStartEvent = new TouchEvent('touchstart', {
-            touches: [new Touch({
-                identifier: Date.now(),
-                target: document.body,
-                clientX: x,
-                clientY: y,
-            })],
-            bubbles: true,
-            cancelable: true
-        });
-
-        document.body.dispatchEvent(touchStartEvent);
-        console.log("Simulated touchstart at:", x, y);
-    }
-
-    function simulateTouchMove(deltaX: number, deltaY: number) {
-        const touchMoveEvent = new TouchEvent('touchmove', {
-            touches: [new Touch({
-                identifier: Date.now(),
-                target: document.body,
-                clientX: startX + deltaX,
-                clientY: startY + deltaY,
-            })],
-            bubbles: true,
-            cancelable: true
-        });
-
-        document.body.dispatchEvent(touchMoveEvent);
-        console.log("Simulated touchmove with delta:", deltaX, deltaY);
-    }
-
-    function simulateTouchEnd(x: number, y: number) {
-        const touchEndEvent = new TouchEvent('touchend', {
-            changedTouches: [new Touch({
-                identifier: Date.now(),
-                target: document.body,
-                clientX: x,
-                clientY: y,
-            })],
-            bubbles: true,
-            cancelable: true
-        });
-
-        document.body.dispatchEvent(touchEndEvent);
-        console.log("Simulated touchend at:", x, y);
-    }
-
-    /**
-     * Function to handle play/pause based on detected gestures (Closed_Fist)
-     */
-    const handlePlayPause = () => {
-        // Something to do with the fist gesture
-
-        //Maybe take the click event in the moment with the other hand make the fist
+        // Absolute "grab & drag": the page tracks the hand in real time. Moving
+        // the hand DOWN (handY grows) pulls the content down, i.e. scrolls the
+        // page up — and vice versa. Because the scroll target comes from the
+        // hand's current position (not a per-frame delta), it neither jitters in
+        // place nor lags behind the movement.
+        const target = drag.anchorScrollY - (handY - drag.anchorHandY) * SCROLL_GAIN;
+        window.scrollTo(0, target);
     }
 
     return (

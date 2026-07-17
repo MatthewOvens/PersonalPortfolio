@@ -91,6 +91,7 @@ button:hover{
 .output_canvas {
   position: fixed;
   z-index: 999;
+  pointer-events: none; /* Let clicks/hover pass through to the page below */
   width: 100vw;
   height: 100vh;
   top: 0px;

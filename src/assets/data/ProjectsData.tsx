@@ -21,7 +21,7 @@ const projectData : ProjectData[] = [{
         title: "Project 2",
         location: "Personal Project - Milan, Italy",
         description: "This is a description of project 2",
-        image: ["https://via.placeholder.com/150"],
+        image: ["src\\assets\\images\\snacman2.png"],
         link: "https://www.google.com",
         acquired_skills: ["React", "TypeScript", "Python", "HTML"]
     },

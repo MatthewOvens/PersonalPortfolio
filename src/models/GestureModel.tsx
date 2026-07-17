@@ -1,5 +1,4 @@
 import { IndexState } from "../utils/GestureEnums";
-import { closedPoints } from "../utils/helpers";
 
 export class GestureModel {
 
@@ -45,34 +44,22 @@ export class GestureModel {
     }
 
     getFingerPinch(landmarks: any) {
-        
-        if (closedPoints(landmarks[8], landmarks[4], 0.05)) {
+        // Distance between the index fingertip (8) and the thumb tip (4).
+        const dx = landmarks[8].x - landmarks[4].x;
+        const dy = landmarks[8].y - landmarks[4].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Hysteresis: once pinched, require a wider gap before releasing, so the
+        // gesture doesn't rapidly toggle when the fingertips hover near the
+        // threshold (which would drop the scroll drag mid-gesture).
+        const threshold = this.currSIndex === IndexState.Closed ? 0.08 : 0.05;
+
+        if (distance < threshold) {
             this.currSIndex = IndexState.Closed;
             return 'index';
-        } else {
-            this.currSIndex = IndexState.Open;
         }
 
-        //Middle finger action
-        if (closedPoints(landmarks[12], landmarks[4], 0.05)) {
-            
-        } else {
-            
-        }
-
-        //Ring finger action
-        if (closedPoints(landmarks[16], landmarks[4], 0.05)) {
-            
-        } else {
-            
-        }
-
-        //Pinky Finger action
-        if (closedPoints(landmarks[20], landmarks[4], 0.05)) {
-            
-        } else {
-            
-        }
+        this.currSIndex = IndexState.Open;
         return undefined;
     }
     

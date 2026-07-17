@@ -8,57 +8,83 @@ import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GestureComponent from './components/GestureComponents';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { hasGetUserMedia } from './utils/helpers';
 
 const App = () => {
 
-  const [video, setVideo] = useState<HTMLVideoElement | null>(null);
+  // Hand navigation (and therefore the webcam) is off until the user opts in
+  // by clicking the hand button in the Introduction section.
+  const [handNavActive, setHandNavActive] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
-  useEffect(() => {
-    if (hasGetUserMedia()) {
-      enableCam();
-    } else {
-      console.log("getUserMedia() is not supported by your browser");
+  async function enableHandNav() {
+    if (!hasGetUserMedia()) {
+      console.warn("getUserMedia() is not supported by your browser");
+      return;
     }
-  }, [video]);
-
-  function enableCam() {
-    // Activate the webcam stream.
-    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-      setVideo(document.getElementById("webcam") as HTMLVideoElement);
-      if (video != null) {
-        video.srcObject = stream;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      streamRef.current = stream;
+      const videoEl = videoRef.current;
+      if (videoEl) {
+        videoEl.srcObject = stream;
+        // A programmatically-set srcObject doesn't always autoplay; without
+        // this the video stays paused and MediaPipe only ever sees a black
+        // frame, so no hand landmarks are detected.
+        await videoEl.play().catch((err) => console.error("Video play() failed:", err));
       }
-    }).catch((error) => {
+      setHandNavActive(true);
+    } catch (error) {
       console.error("Error accessing webcam:", error);
-    });
+    }
+  }
+
+  function disableHandNav() {
+    // Release the camera so the browser indicator turns off.
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setHandNavActive(false);
+  }
+
+  function toggleHandNav() {
+    if (handNavActive) {
+      disableHandNav();
+    } else {
+      enableHandNav();
+    }
   }
 
   return (
     <div>
-      <div className='canvas'>
-        <GestureComponent video={video} />
-      </div>    
-      <video id="webcam" autoPlay playsInline style={{ display: "none" }}></video> 
+      {handNavActive && (
+        <div className='canvas'>
+          <GestureComponent video={videoRef.current} />
+        </div>
+      )}
+      <video ref={videoRef} id="webcam" autoPlay playsInline style={{ display: "none" }}></video>
       <div className='mynavbar'>
         <NavBar/>
       </div>
       <div className='introduction' id='home'>
-        <Introduction />
+        <Introduction handNavActive={handNavActive} onToggleHandNav={toggleHandNav} />
       </div>
       <div className='projects' id='projects'>
         <Projects />
       </div>
       <div className='education' id='education'>
         <Education />
-      </div> 
+      </div>
       <div className='contacts' id='contacts'>
         <Contacts />
       </div>
       <div className='footer'>
         <Footer />
-      </div> 
+      </div>
     </div>
   );
 };

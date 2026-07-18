@@ -23,6 +23,14 @@ const OE_DCUTOFF = 1.0;
 // hand. SCROLL_GAIN = how many px the page moves per px of hand movement.
 const SCROLL_GAIN = 1.0;
 
+// Cap the hand-tracking work to this rate. The MediaPipe recognizer is by far
+// the heaviest part of the loop and, on a browser without GPU acceleration, it
+// falls back to CPU/software — so running it on every 60fps display frame is
+// what makes the skeleton lag on some machines. 30fps still looks smooth and
+// roughly halves the cost, independent of the visitor's browser settings.
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
+
 const GestureComponent = (props: GestureComponentProps) => {
     const video = props.video;
 
@@ -31,8 +39,11 @@ const GestureComponent = (props: GestureComponentProps) => {
     const gestureRecognizerRef = useRef<GestureRecognizer | null>(null);
     const canvasElementRef = useRef<HTMLCanvasElement | null>(null);
     const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+    const drawingUtilsRef = useRef<DrawingUtils | null>(null);
     const resultsRef = useRef<any>(undefined);
     const rafIdRef = useRef<number | null>(null);
+    // Timestamp of the last processed frame, used to throttle to TARGET_FPS.
+    const lastFrameTimeRef = useRef(0);
     const modelRef = useRef<GestureModel>(new GestureModel());
 
     // Pinch/drag state, kept across animation frames. On grab we record the
@@ -137,11 +148,16 @@ const GestureComponent = (props: GestureComponentProps) => {
      * Function to predict gestures from the webcam feed
      */
     const predictWebcam = () => {
+        // Keep the loop alive on every display frame, but gate the actual work
+        // below by elapsed time so heavy processing runs at most TARGET_FPS.
+        rafIdRef.current = requestAnimationFrame(predictWebcam);
+
         const recognizer = gestureRecognizerRef.current;
-        if (!recognizer) {
-            rafIdRef.current = requestAnimationFrame(predictWebcam);
-            return;
-        }
+        if (!recognizer) return;
+
+        const now = performance.now();
+        if (now - lastFrameTimeRef.current < FRAME_INTERVAL) return;
+        lastFrameTimeRef.current = now;
 
         if (setupCanvas()) {
             if (video && video.videoHeight > 0 && video.videoWidth > 0) {
@@ -150,7 +166,10 @@ const GestureComponent = (props: GestureComponentProps) => {
                     console.log(`[GestureComponent] Video ready: ${video.videoWidth}x${video.videoHeight}, running recognition.`);
                 }
                 try {
-                    resultsRef.current = recognizer.recognizeForVideo(video, Date.now());
+                    // performance.now() is monotonic; MediaPipe requires strictly
+                    // increasing timestamps, and Date.now() can repeat within a
+                    // millisecond and cause frames to be dropped.
+                    resultsRef.current = recognizer.recognizeForVideo(video, now);
                 } catch (error) {
                     console.error(error);
                 }
@@ -158,8 +177,6 @@ const GestureComponent = (props: GestureComponentProps) => {
             drawHands();
             performAction();
         }
-
-        rafIdRef.current = requestAnimationFrame(predictWebcam);
     }
 
     const setupCanvas = () => {
@@ -168,6 +185,11 @@ const GestureComponent = (props: GestureComponentProps) => {
             if (!el) return false;
             canvasElementRef.current = el;
             canvasCtxRef.current = el.getContext("2d");
+            if (canvasCtxRef.current) {
+                // Created once here rather than per frame in drawHands, to avoid
+                // a fresh allocation on every rendered frame.
+                drawingUtilsRef.current = new DrawingUtils(canvasCtxRef.current);
+            }
             el.style.height = videoHeight;
             el.style.width = videoWidth;
         }
@@ -296,7 +318,10 @@ const GestureComponent = (props: GestureComponentProps) => {
         // hand's current position (not a per-frame delta), it neither jitters in
         // place nor lags behind the movement.
         const target = drag.anchorScrollY - (handY - drag.anchorHandY) * SCROLL_GAIN;
-        window.scrollTo(0, target);
+        // "instant" overrides the root's `scroll-behavior: smooth`, which would
+        // otherwise turn each per-frame scroll into an interrupted animation
+        // and make the page judder while the pinch is held.
+        window.scrollTo({ top: target, behavior: "instant" });
     }
 
     /**

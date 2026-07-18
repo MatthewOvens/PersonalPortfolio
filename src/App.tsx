@@ -25,7 +25,18 @@ const App = () => {
       return;
     }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Ask for a modest resolution/frame rate. Hand tracking doesn't need HD,
+      // and a smaller source frame is far cheaper for MediaPipe to process —
+      // which matters most on machines where the browser has no GPU
+      // acceleration and the recognizer falls back to software. These are
+      // "ideal" hints, so the browser still picks the closest supported mode.
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          frameRate: { ideal: 30 },
+        },
+      });
       streamRef.current = stream;
       const videoEl = videoRef.current;
       if (videoEl) {

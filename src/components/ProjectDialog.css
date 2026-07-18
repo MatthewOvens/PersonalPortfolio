@@ -1,75 +1,122 @@
-.content2,
-.content1 {
+/* Bootstrap modal overrides */
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    font-family: var(--font-body);
+    color: var(--ink);
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--line-light);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--line-light);
+    padding: 1rem 2rem;
+}
+
+.dialogTitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.location {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-top: 4px;
+}
+
+.content {
+    padding: 2rem;
+}
+
+.content1,
+.content2 {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 1rem;
-    margin: 0 1rem;
-    
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
 }
-.content2 {
-    background-color: blue;
+
+.dialogText {
+    flex: 1;
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--ink-muted);
 }
-.content1 {
-    background-color: red;
+
+.image1Container {
+    width: 50%;
+    flex-shrink: 0;
+}
+
+.image1 {
+    width: 100%;
+    border-radius: 14px;
+    box-shadow: var(--shadow-card);
 }
 
 .content3 {
     display: flex;
     flex-direction: column;
-    padding: 2rem;
-    margin: 0 1rem;
-    align-content: center;
-    background-color: green;
+    align-items: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--line-light);
 }
 
 .skillstitle {
-    align-self: center;
-}
-
-.skillsss {
-    
-    background-color: red;    
+    margin: 1.5rem 0 0.5rem;
+    color: var(--ink);
 }
 
 .takeaways {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 1rem;
-    margin: 1rem;
+    justify-content: center;
+    gap: 10px;
+    padding: 1rem 0;
 }
 
 .skill {
-    align-content: center;
-    width: fit-content;
-    height: 3rem;
-    transition: all 0.3s ease-in-out;
-    margin: 0.5rem;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
+    background-color: var(--accent-soft);
+    color: var(--accent-strong);
+    border: 1px solid rgba(255, 160, 0, 0.35);
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
     font-weight: 600;
-    &:hover {
-        transform: scale(1.2);
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.skill:hover {
+    background-color: var(--accent);
+    color: var(--ink);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .content1,
+    .content2 {
+        flex-direction: column;
     }
-}
 
-.location {
-    font-size: 1rem;
-    font-weight: 200;
-}
+    .content2 {
+        flex-direction: column-reverse;
+    }
 
-.image1Container {
-    width: 50%;
-}
-
-.image1 {
-    width: 100%;
-}
-
-.closeButton {
-    cursor: pointer;
-    background-color: red !important;
+    .image1Container {
+        width: 100%;
+    }
 }

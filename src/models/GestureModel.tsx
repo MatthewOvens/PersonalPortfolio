@@ -15,7 +15,7 @@ export class GestureModel {
      * @param landmarks Coordinates of the landmarks of the hand
      * @param current_gesture Current recognized gesture
      */
-    updateFSMStates(categoryName: string, handedness: string, landmarks: any, current_gesture: any) {
+    updateFSMStates(categoryName: string, _handedness: string, _landmarks: any, _current_gesture: any) {
         // Each landmark is a point in the hand represented in the coordinates space
         switch (categoryName) {
             case "None":

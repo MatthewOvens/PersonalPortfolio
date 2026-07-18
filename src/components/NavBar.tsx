@@ -13,7 +13,7 @@ const NavBar = () => {
         </g>
       </svg>
       </a>
-      <div>
+      <div className='navlinks'>
         <a className='navBarLink' href="#home">Home</a>
         <a className='navBarLink' href="#projects">Projects</a>
         <a className='navBarLink' href="#education">Education</a>
@@ -24,13 +24,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
-/*
-<img
-              src="/img/logo.svg"
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-              alt="React Bootstrap logo"
-            />
-*/

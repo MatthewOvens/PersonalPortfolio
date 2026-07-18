@@ -1,91 +1,61 @@
 #root {
   width: 100%;
-  /*max-width: 1280px;*/
   margin: 0 auto;
   text-align: center;
   overflow: hidden; /* Hide scrollbars */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-button:hover{
+button:hover {
   cursor: pointer;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
 .mynavbar {
-  height: 80px;
+  height: 72px;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 10;
-  color: #FCFCFC;
-  background-color: #2A2E36;
-  border-bottom: 1px solid #FCFCFC;
+  color: var(--light);
+  background-color: rgba(28, 32, 39, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line-dark);
 }
 
 .introduction {
-  height: 100vh;
-  position: block;
-  color: #FCFCFC;
-  background-color: #2A2E36;
+  min-height: 100vh;
+  color: var(--light);
+  background:
+    radial-gradient(1000px 520px at 85% -10%, rgba(255, 160, 0, 0.13), transparent 60%),
+    radial-gradient(820px 620px at -10% 110%, rgba(255, 160, 0, 0.07), transparent 55%),
+    var(--dark);
 }
 
 .projects {
-  padding-top: 50px;
-  position: block;
-  background-color: #FCFCFC;
-  color: #000411;
+  padding: 110px 24px;
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
 .education {
-  padding-top: 50px;
-  position: block;
+  padding: 110px 24px;
+  background-color: #ffffff;
+  color: var(--ink);
+  border-top: 1px solid var(--line-light);
+  border-bottom: 1px solid var(--line-light);
 }
 
 .contacts {
-  position: block;
-  background-color: #FCFCFC;
-  padding-top: 50px;
+  padding: 110px 24px;
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
 .footer {
-  background-color: #2A2E36;
-  color: #FCFCFC;
+  background-color: var(--dark);
+  color: var(--light-muted);
+  border-top: 1px solid var(--line-dark);
 }
 
 .output_canvas {

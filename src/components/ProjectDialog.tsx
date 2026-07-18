@@ -11,22 +11,6 @@ interface ProjectDialogProps {
 
 const ProjectDialog = (props : ProjectDialogProps) => {
 
-    console.log("ProjectDialog.tsx")
-    console.log(props.projectData)
-    console.log(props.show)
-    console.log(props.onHide)
-
-/*     const [isOpen, setIsOpen] = useState(false);
- */    
-    /* 
-    const openDialog = () => {
-        setIsOpen(true);
-    };
-
-    const closeDialog = () => {
-        setIsOpen(false);
-    }; */
-
     return (
         <>
             <Modal
@@ -36,7 +20,7 @@ const ProjectDialog = (props : ProjectDialogProps) => {
                 centered
                 >
                 <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter" style={{fontSize: "50px"}}>
+                    <Modal.Title id="contained-modal-title-vcenter" className='dialogTitle'>
                     {props.projectData?.title}
                     <div className='location'>
                         {props.projectData?.location}
@@ -48,19 +32,19 @@ const ProjectDialog = (props : ProjectDialogProps) => {
                         <div className='image1Container'>
                             <img src={props.projectData?.image[0]} className='image1'/>
                         </div>
-                        <h3>{props.projectData?.description}</h3>
+                        <p className='dialogText'>{props.projectData?.description}</p>
                     </div>
                     <div className='content2'>
-                        <h3>{props.projectData?.description}</h3>
+                        <p className='dialogText'>{props.projectData?.description}</p>
                         <div className='image1Container'>
                             <img src={props.projectData?.image[0]} className='image1'/>
                         </div>
                     </div>
                     <div className='content3'>
-                        <h3 className='skillstitle'>Acquired Skills</h3>
+                        <h4 className='skillstitle'>Acquired Skills</h4>
                         <div className='takeaways'>
                             {props.projectData?.acquired_skills?.map(skill => (
-                                <div className='skill first-color second-color-background'>{skill}</div>
+                                <div key={skill} className='skill'>{skill}</div>
                             ))}
                         </div>
                     </div>

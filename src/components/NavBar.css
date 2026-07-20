@@ -21,6 +21,10 @@
     color: var(--light);
     opacity: 0.85;
     padding-bottom: 4px;
+    /* Animate the hitbox growth in sync with the navbar dropping down. */
+    transition: padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                background-color 0.35s ease,
+                border-radius 0.35s ease;
 }
 
 .navBarLink:hover {
@@ -44,6 +48,20 @@
 
 .navBarLink:hover::after {
     transform: scaleX(1);
+}
+
+/* When the navbar drops down for hand navigation, turn each link into a large
+   padded target with a visible pill, so the hand can click anywhere near the
+   text instead of having to land precisely on it. The padding is part of the
+   anchor's box, so document.elementFromPoint (used to dispatch the click) hits
+   the whole area. */
+.mynavbar.reachable .navlinks {
+    gap: 16px;
+}
+
+.mynavbar.reachable .navBarLink {
+    padding: 16px 22px;
+    opacity: 1;
 }
 
 .my-logo {

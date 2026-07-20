@@ -21,6 +21,17 @@ button:hover {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line-dark);
+  /* Hand navigation: when the cursor nears the top, the bar drops down toward
+     the hand (see .reachable). Animate height so it stays anchored at top:0 —
+     it grows downward like a curtain, leaving no empty gap above it. */
+  transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Toggled by the gesture loop while the hand cursor is near the top of the
+   page. The bar expands downward so its links sit in a comfortable, reachable
+   zone instead of hugging the very top edge. */
+.mynavbar.reachable {
+  height: 168px;
 }
 
 .introduction {

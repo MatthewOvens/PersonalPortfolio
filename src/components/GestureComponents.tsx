@@ -31,6 +31,15 @@ const SCROLL_GAIN = 1.0;
 const TARGET_FPS = 30;
 const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
+// The fixed top menu is hard to reach with the hand (the palm centre can't
+// comfortably get to the very top edge). Instead of moving the cursor, we bring
+// the menu to the hand: when the cursor rises into the top band of the viewport
+// the navbar drops down (CSS .reachable). Two thresholds (as fractions of the
+// viewport height) give hysteresis so the bar doesn't flicker at the boundary:
+// it opens once the cursor is above ENTER and only closes again below EXIT.
+const MENU_ENTER_RATIO = 0.16;
+const MENU_EXIT_RATIO = 0.30;
+
 const GestureComponent = (props: GestureComponentProps) => {
     const video = props.video;
 
@@ -68,6 +77,11 @@ const GestureComponent = (props: GestureComponentProps) => {
     // The on-screen cursor element that follows the hand.
     const cursorRef = useRef<HTMLDivElement>(null);
 
+    // The fixed top navbar (looked up lazily) and whether it's currently dropped
+    // down toward the hand, so we only touch the DOM on state changes.
+    const navbarElRef = useRef<HTMLElement | null>(null);
+    const menuReachableRef = useRef(false);
+
     // One-time diagnostic flags so we can see where the pipeline stops.
     const videoReadyLoggedRef = useRef(false);
     const firstDetectionLoggedRef = useRef(false);
@@ -94,6 +108,8 @@ const GestureComponent = (props: GestureComponentProps) => {
                 cancelAnimationFrame(rafIdRef.current);
                 rafIdRef.current = null;
             }
+            // Hand navigation turned off: leave the navbar in its resting state.
+            document.querySelector(".mynavbar")?.classList.remove("reachable");
         };
     }, [video]);
 
@@ -352,6 +368,31 @@ const GestureComponent = (props: GestureComponentProps) => {
         cursor.style.left = `${x}px`;
         cursor.style.top = `${y}px`;
         cursor.style.display = "block";
+
+        updateMenuReach(y);
+    }
+
+    /**
+     * Drop the top navbar down toward the hand while the cursor is near the top
+     * of the viewport, so its links are reachable without stretching to the very
+     * edge. Uses two thresholds for hysteresis (see MENU_ENTER/EXIT_RATIO).
+     */
+    const updateMenuReach = (y: number) => {
+        const wasReachable = menuReachableRef.current;
+        const limit = window.innerHeight * (wasReachable ? MENU_EXIT_RATIO : MENU_ENTER_RATIO);
+        const reachable = y < limit;
+        if (reachable === wasReachable) return;
+
+        menuReachableRef.current = reachable;
+        setMenuReachable(reachable);
+    }
+
+    /** Toggle the CSS class that drops the navbar down (looked up lazily). */
+    const setMenuReachable = (on: boolean) => {
+        if (!navbarElRef.current) {
+            navbarElRef.current = document.querySelector(".mynavbar");
+        }
+        navbarElRef.current?.classList.toggle("reachable", on);
     }
 
     /** Hide the cursor and reset its filters when no hand is visible. */
@@ -364,6 +405,12 @@ const GestureComponent = (props: GestureComponentProps) => {
         pointerRef.current.fistHeld = false;
         pointerFilterRef.current.x.reset();
         pointerFilterRef.current.y.reset();
+
+        // Retract the menu when the hand leaves the frame.
+        if (menuReachableRef.current) {
+            menuReachableRef.current = false;
+            setMenuReachable(false);
+        }
     }
 
     /** On the rising edge of a fist, dispatch a real click under the cursor. */

@@ -20,11 +20,16 @@
 }
 
 .hnt-card {
+  /* Card height and header height are both fixed, so a section can be sized to
+     exactly the space left over — one step per viewport, never half-cut. */
+  --hnt-card-h: min(88vh, 820px);
+  --hnt-header-h: 84px;
+
   position: relative;
   display: flex;
   flex-direction: column;
   width: min(760px, 94vw);
-  height: min(88vh, 820px);
+  height: var(--hnt-card-h);
   background: var(--dark-raised);
   color: var(--light);
   border: 1px solid var(--line-dark);
@@ -35,17 +40,41 @@
   animation: hnt-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* The negative right margin on every letter-spaced, centred label cancels the
+   trailing space CSS adds after the last glyph — without it the text sits
+   visibly left of centre in the column. */
 .hnt-eyebrow {
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.18em;
+  margin-right: -0.18em;
   font-size: 0.72rem;
   font-weight: 700;
+}
+
+/* --- Fixed header -------------------------------------------------------- */
+.hnt-header {
+  flex: none;
+  height: var(--hnt-header-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 24px;
+  text-align: center;
+  border-bottom: 1px solid var(--line-dark);
+}
+.hnt-heading {
+  margin: 0;
+  color: var(--light);
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
 }
 
 /* --- Scroll area --------------------------------------------------------- */
 .hnt-scroll {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
@@ -60,25 +89,22 @@
 .hnt-content {
   max-width: 560px;
   margin: 0 auto;
-  padding: 8px 40px 14vh;
+  padding: 0 40px;
 }
 
-.hnt-header {
-  text-align: center;
-  padding: 8px 0 4px;
-}
-.hnt-heading {
-  margin: 8px 0 0;
-  color: var(--light);
-}
-
+/* One step = one viewport-worth of the scroll area, so a section is always
+   fully readable without scrolling inside it. min-height (not height) so an
+   unusually tall step still grows rather than clipping. */
 .hnt-section {
+  box-sizing: border-box;
+  min-height: calc(var(--hnt-card-h) - var(--hnt-header-h));
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   gap: 6px;
-  padding: 52px 0;
+  padding: 20px 0;
 }
 .hnt-section + .hnt-section {
   border-top: 1px solid var(--line-dark);
@@ -86,12 +112,15 @@
 
 .hnt-illustration {
   margin-bottom: 10px;
+  min-height: 0;
 }
 
-/* GIF-style gesture demos — one per step. */
+/* GIF-style gesture demos — one per step. Sized off the card height (not the
+   viewport) so the clip shrinks in step with the space the section actually
+   has. */
 .hnt-video {
-  max-width: min(420px, 84%);
-  max-height: 46vh;
+  max-width: min(400px, 84%);
+  max-height: min(calc(var(--hnt-card-h) * 0.4), 280px);
   border-radius: 16px;
   display: block;
   object-fit: contain;
@@ -103,6 +132,7 @@
   font-family: var(--font-display);
   color: var(--accent);
   letter-spacing: 0.14em;
+  margin-right: -0.14em; /* see .hnt-eyebrow */
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -120,14 +150,46 @@
 
 .hnt-cta {
   display: block;
-  margin: 40px auto 0;
-  min-width: min(360px, 100%);
-  min-height: 66px;
-  padding: 18px 40px;
-  font-size: 1.15rem;
+  flex: none;
+  margin: 48px auto 8px;
+  min-width: min(340px, 100%);
+  min-height: 62px;
+  padding: 16px 36px;
+  font-size: 1.1rem;
   border-radius: 18px;
   background: var(--accent);
   color: var(--ink);
+}
+
+/* --- Detection status (step 01) ------------------------------------------ */
+.hnt-status {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 16px;
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  color: var(--light-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.hnt-status.seen {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.hnt-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--light-muted);
+  flex: none;
+  animation: hnt-pulse 1.3s ease-in-out infinite;
+}
+.hnt-status.seen .hnt-status-dot {
+  background: var(--accent);
+  animation: none;
 }
 
 /* --- Scroll hint --------------------------------------------------------- */
@@ -141,6 +203,9 @@
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.06em;
+}
+.hnt-hint span {
+  margin-right: -0.06em; /* see .hnt-eyebrow */
 }
 .hnt-chevrons {
   animation: hnt-chev 1.6s ease-in-out infinite;
@@ -162,6 +227,10 @@
   0%, 100% { transform: translateY(0); opacity: 1; }
   50% { transform: translateY(4px); opacity: 0.6; }
 }
+@keyframes hnt-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
 
 /* --- Reduced motion ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
@@ -172,8 +241,36 @@
   .hnt-scroll {
     scroll-behavior: auto;
   }
-  .hnt-chevrons {
+  .hnt-chevrons,
+  .hnt-status-dot {
     animation: none !important;
+  }
+}
+
+/* Short viewports: tighten the vertical rhythm so a step still fits whole. */
+@media (max-height: 720px) {
+  .hnt-card {
+    --hnt-header-h: 68px;
+  }
+  .hnt-section {
+    padding: 14px 0;
+  }
+  .hnt-illustration {
+    margin-bottom: 4px;
+  }
+  .hnt-panel-body {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .hnt-status,
+  .hnt-hint {
+    margin-top: 12px;
+  }
+  .hnt-cta {
+    margin-top: 32px;
+    min-height: 54px;
+    padding: 12px 32px;
+    font-size: 1rem;
   }
 }
 
@@ -183,13 +280,14 @@
     padding: 0;
   }
   .hnt-card {
+    --hnt-card-h: 100dvh;
+    --hnt-header-h: 72px;
     width: 100vw;
-    height: 100dvh;
     max-width: none;
     border: none;
     border-radius: 0;
   }
   .hnt-content {
-    padding: 8px 26px 16vh;
+    padding: 0 26px;
   }
 }

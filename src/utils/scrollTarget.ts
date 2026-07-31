@@ -16,13 +16,16 @@ export const setScrollTarget = (el: HTMLElement | null) => {
 export const readScroll = (): number =>
     target ? target.scrollTop : window.scrollY;
 
-/** Scroll the active target (or the window) to an absolute offset, instantly. */
+/**
+ * Scroll the active target (or the window) to an absolute offset, instantly.
+ *
+ * Both paths must pass "instant" explicitly: the page root and the overlay both
+ * set `scroll-behavior: smooth` in CSS, which would otherwise turn every
+ * per-frame write into its own smooth animation, each one interrupted by the
+ * next. That reads as juddering, and it's why a plain `scrollTop = top`
+ * assignment (which obeys the CSS) feels nothing like the main page.
+ */
 export const writeScroll = (top: number) => {
-    if (target) {
-        target.scrollTop = top;
-    } else {
-        // "instant" overrides the root's smooth scroll-behavior, which would
-        // otherwise turn each per-frame scroll into an interrupted animation.
-        window.scrollTo({ top, behavior: "instant" as ScrollBehavior });
-    }
+    const el: Element | Window = target ?? window;
+    el.scrollTo({ top, behavior: "instant" as ScrollBehavior });
 };

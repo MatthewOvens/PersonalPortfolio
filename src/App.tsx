@@ -20,6 +20,9 @@ const App = () => {
   // The tutorial opens together with the camera: the user learns the pinch and
   // fist gestures by actually using them to scroll through and close it.
   const [tutorialOpen, setTutorialOpen] = useState(false);
+  // Whether a hand is currently tracked. The tutorial's first step waits on
+  // this to confirm the webcam sees the visitor and then moves itself on.
+  const [handVisible, setHandVisible] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -64,6 +67,7 @@ const App = () => {
       videoRef.current.srcObject = null;
     }
     setHandNavActive(false);
+    setHandVisible(false);
   }
 
   function toggleHandNav() {
@@ -82,10 +86,12 @@ const App = () => {
     <div>
       {handNavActive && (
         <div className='canvas'>
-          <GestureComponent video={videoRef.current} />
+          <GestureComponent video={videoRef.current} onHandVisibleChange={setHandVisible} />
         </div>
       )}
-      {tutorialOpen && <HandNavTutorial onClose={() => setTutorialOpen(false)} />}
+      {tutorialOpen && (
+        <HandNavTutorial handVisible={handVisible} onClose={() => setTutorialOpen(false)} />
+      )}
       <video ref={videoRef} id="webcam" autoPlay playsInline style={{ display: "none" }}></video>
       <div className='mynavbar'>
         <NavBar/>

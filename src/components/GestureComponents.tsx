@@ -1,6 +1,7 @@
 import { DrawingUtils, FilesetResolver, GestureRecognizer } from "@mediapipe/tasks-vision";
 import { GestureModel } from "../models/GestureModel";
 import { OneEuroFilter } from "../utils/OneEuroFilter";
+import { readScroll, writeScroll } from "../utils/scrollTarget";
 import { useEffect, useRef } from "react";
 
 export interface Coordinates {
@@ -10,6 +11,11 @@ export interface Coordinates {
 
 interface GestureComponentProps {
     video: HTMLVideoElement | null
+    /**
+     * Called on the edges of hand visibility (never per frame). The tutorial
+     * uses it to move on as soon as the visitor's hand actually shows up.
+     */
+    onHandVisibleChange?: (visible: boolean) => void
 }
 
 // Pinch-scroll tuning.
@@ -85,6 +91,13 @@ const GestureComponent = (props: GestureComponentProps) => {
     // One-time diagnostic flags so we can see where the pipeline stops.
     const videoReadyLoggedRef = useRef(false);
     const firstDetectionLoggedRef = useRef(false);
+
+    // Whether a hand is currently on screen, plus the latest callback. Both live
+    // in refs because the detection loop keeps its first closure alive across
+    // renders, so reading the prop directly would give a stale value.
+    const handVisibleRef = useRef(false);
+    const onHandVisibleChangeRef = useRef(props.onHandVisibleChange);
+    onHandVisibleChangeRef.current = props.onHandVisibleChange;
 
     const videoHeight = "100vh";
     const videoWidth = "100vw";
@@ -262,13 +275,16 @@ const GestureComponent = (props: GestureComponentProps) => {
         if (!results || !results.landmarks || results.landmarks.length === 0) {
             // No hand on screen: end any in-progress drag and hide the cursor.
             dragRef.current.isDragging = false;
+            setHandVisible(false);
             hidePointer();
             return;
         }
 
+        setHandVisible(true);
+
         if (!firstDetectionLoggedRef.current) {
             firstDetectionLoggedRef.current = true;
-            console.log(`[GestureComponent] Hand detected — drawing skeleton (${results.landmarks.length} hand(s)).`);
+            console.log(`[GestureComponent] Hand detected (${results.landmarks.length} hand(s)).`);
         }
 
         // Only one hand is tracked (numHands: 1).
@@ -289,6 +305,13 @@ const GestureComponent = (props: GestureComponentProps) => {
         }
 
         detectAction(categoryName, handedness, landmarks);
+    }
+
+    /** Report hand visibility upward, but only when it actually changes. */
+    const setHandVisible = (visible: boolean) => {
+        if (handVisibleRef.current === visible) return;
+        handVisibleRef.current = visible;
+        onHandVisibleChangeRef.current?.(visible);
     }
 
     /**
@@ -324,7 +347,7 @@ const GestureComponent = (props: GestureComponentProps) => {
         if (!drag.isDragging) {
             drag.isDragging = true;
             drag.anchorHandY = handY;
-            drag.anchorScrollY = window.scrollY;
+            drag.anchorScrollY = readScroll();
             return;
         }
 
@@ -333,11 +356,12 @@ const GestureComponent = (props: GestureComponentProps) => {
         // page up — and vice versa. Because the scroll target comes from the
         // hand's current position (not a per-frame delta), it neither jitters in
         // place nor lags behind the movement.
+        //
+        // The write goes through the shared scroll target so the gesture drives
+        // whichever container is active: the page normally, or a scrollable
+        // overlay such as the tutorial while it's open.
         const target = drag.anchorScrollY - (handY - drag.anchorHandY) * SCROLL_GAIN;
-        // "instant" overrides the root's `scroll-behavior: smooth`, which would
-        // otherwise turn each per-frame scroll into an interrupted animation
-        // and make the page judder while the pinch is held.
-        window.scrollTo({ top: target, behavior: "instant" });
+        writeScroll(target);
     }
 
     /**

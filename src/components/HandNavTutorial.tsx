@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { setScrollTarget } from '../utils/scrollTarget';
+import helloVideo from '../assets/hello animation.mp4';
 import pinchVideo from '../assets/pinch animation.mp4';
 import clickVideo from '../assets/click animation.mp4';
 import './HandNavTutorial.css';
@@ -8,78 +9,6 @@ interface HandNavTutorialProps {
   /** Close the tutorial. Hand navigation stays on — it's already running. */
   onClose: () => void;
 }
-
-/**
- * Base open-hand skeleton, drawn with the exact colours the live tracking uses
- * (yellow bones / magenta joints), so the illustrations match what the visitor
- * actually sees on screen. Each finger is its own group so the panels can
- * animate them independently (draw-in, pinch, curl) via descendant CSS.
- */
-const HandSkeleton = () => (
-  <>
-    <g className="palm">
-      <line className="bone" x1="100" y1="175" x2="72" y2="108" />
-      <line className="bone" x1="100" y1="175" x2="96" y2="100" />
-      <line className="bone" x1="100" y1="175" x2="120" y2="104" />
-      <line className="bone" x1="100" y1="175" x2="142" y2="116" />
-      <line className="bone" x1="100" y1="175" x2="60" y2="140" />
-      <path className="bone" d="M72 108 L96 100 L120 104 L142 116" />
-      <circle className="joint" cx="100" cy="175" r="6" />
-      <circle className="joint" cx="72" cy="108" r="5" />
-      <circle className="joint" cx="96" cy="100" r="5" />
-      <circle className="joint" cx="120" cy="104" r="5" />
-      <circle className="joint" cx="142" cy="116" r="5" />
-      <circle className="joint" cx="60" cy="140" r="5" />
-    </g>
-
-    <g className="finger f-thumb">
-      <line className="bone" x1="60" y1="140" x2="46" y2="125" />
-      <line className="bone" x1="46" y1="125" x2="32" y2="110" />
-      <circle className="joint" cx="46" cy="125" r="4" />
-      <circle className="joint tip-thumb" cx="32" cy="110" r="5" />
-    </g>
-
-    <g className="finger f-index">
-      <line className="bone" x1="72" y1="108" x2="69" y2="74" />
-      <line className="bone" x1="69" y1="74" x2="66" y2="40" />
-      <circle className="joint" cx="69" cy="74" r="4" />
-      <circle className="joint tip-index" cx="66" cy="40" r="5" />
-    </g>
-
-    <g className="finger f-middle">
-      <line className="bone" x1="96" y1="100" x2="96" y2="66" />
-      <line className="bone" x1="96" y1="66" x2="96" y2="32" />
-      <circle className="joint" cx="96" cy="66" r="4" />
-      <circle className="joint" cx="96" cy="32" r="5" />
-    </g>
-
-    <g className="finger f-ring">
-      <line className="bone" x1="120" y1="104" x2="122" y2="73" />
-      <line className="bone" x1="122" y1="73" x2="124" y2="42" />
-      <circle className="joint" cx="122" cy="73" r="4" />
-      <circle className="joint" cx="124" cy="42" r="5" />
-    </g>
-
-    <g className="finger f-pinky">
-      <line className="bone" x1="142" y1="116" x2="146" y2="94" />
-      <line className="bone" x1="146" y1="94" x2="150" y2="72" />
-      <circle className="joint" cx="146" cy="94" r="4" />
-      <circle className="joint" cx="150" cy="72" r="5" />
-    </g>
-  </>
-);
-
-/** Step 1 — the skeleton draws itself in, mirroring the ~1s warm-up. */
-const WaitIllustration = () => (
-  <svg className="hnt-hand draw" viewBox="0 0 200 210" aria-hidden="true">
-    <HandSkeleton />
-    <g className="loading-dots">
-      <circle cx="82" cy="200" r="4" />
-      <circle cx="100" cy="200" r="4" />
-      <circle cx="118" cy="200" r="4" />
-    </g>
-  </svg>
-);
 
 /** Looping, muted, inline video used as a GIF-style demo for a gesture. */
 const GestureClip = ({ src }: { src: string }) => (
@@ -99,7 +28,7 @@ const panels: Panel[] = [
     n: '01',
     title: 'Attendi la tua mano',
     body: 'La webcam si sta avviando. Tra circa un secondo lo scheletro della tua mano comparirà sullo schermo e comincerà a seguire ogni tuo movimento.',
-    illustration: <WaitIllustration />,
+    illustration: <GestureClip src={helloVideo} />,
     hint: 'Fai il pinch e scorri verso il basso',
   },
   {

@@ -8,6 +8,7 @@ import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GestureComponent from './components/GestureComponents';
+import HandNavTutorial from './components/HandNavTutorial';
 import { useRef, useState } from 'react';
 import { hasGetUserMedia } from './utils/helpers';
 
@@ -16,6 +17,9 @@ const App = () => {
   // Hand navigation (and therefore the webcam) is off until the user opts in
   // by clicking the hand button in the Introduction section.
   const [handNavActive, setHandNavActive] = useState(false);
+  // The tutorial opens together with the camera: the user learns the pinch and
+  // fist gestures by actually using them to scroll through and close it.
+  const [tutorialOpen, setTutorialOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -65,8 +69,12 @@ const App = () => {
   function toggleHandNav() {
     if (handNavActive) {
       disableHandNav();
+      setTutorialOpen(false);
     } else {
+      // Turn the camera on and open the tutorial at the same time, so the user
+      // can practice the gestures on the tutorial itself.
       enableHandNav();
+      setTutorialOpen(true);
     }
   }
 
@@ -77,6 +85,7 @@ const App = () => {
           <GestureComponent video={videoRef.current} />
         </div>
       )}
+      {tutorialOpen && <HandNavTutorial onClose={() => setTutorialOpen(false)} />}
       <video ref={videoRef} id="webcam" autoPlay playsInline style={{ display: "none" }}></video>
       <div className='mynavbar'>
         <NavBar/>

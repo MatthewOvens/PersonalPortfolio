@@ -32,7 +32,7 @@ const panels: Panel[] = [
   {
     n: '01',
     title: 'Wave at the camera',
-    body: 'Hold your open hand up to the webcam, like in the clip, until the skeleton appears.',
+    body: 'Hold your open hand up to the webcam, until the skeleton appears.',
     illustration: <GestureClip src={helloVideo} />,
   },
   {

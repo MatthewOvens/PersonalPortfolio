@@ -1,18 +1,29 @@
 import './Education.css';
 
-// Placeholder entries — swap in the real education history.
 const educationData = [
   {
-    period: '2021 — 2024',
-    title: "Master's Degree",
-    school: 'University name — City, Country',
-    detail: 'Short description of the programme: focus areas, thesis topic, notable coursework.',
+    period: '2022 - 2024',
+    title: 'MSc in Human Computer Interaction & Design (HCID)',
+    school: 'EIT Digital Master School',
+    details: [
+      'Entry year: UPM - Madrid, Spain',
+      'Exit year: UPS - Paris, France',
+      'Summer school: “Digital Platform for Smart Cities” — Aalto University, Helsinki',
+    ],
   },
   {
-    period: '2018 — 2021',
-    title: "Bachelor's Degree",
-    school: 'University name — City, Country',
-    detail: 'Short description of the programme: focus areas, projects, notable coursework.',
+    period: 'Mar 2020 - Jun 2020',
+    title: 'Postgraduate studies',
+    school: 'Bit Academy - Turin, Italy',
+    details: [],
+  },
+  {
+    period: '2017 - 2020',
+    title: 'Bachelor in Computer Science',
+    school: 'Università Milano-Bicocca - Milan, Italy',
+    details: [
+      'Erasmus+ programme: 6 months at Universidad Rovira i Virgili, Tarragona',
+    ],
   },
 ];
 
@@ -30,7 +41,13 @@ const Education = () => {
             <span className='timelinePeriod'>{entry.period}</span>
             <h4 className='timelineTitle'>{entry.title}</h4>
             <div className='timelineSchool'>{entry.school}</div>
-            <p className='timelineDetail'>{entry.detail}</p>
+            {entry.details.length > 0 && (
+              <ul className='timelineDetails'>
+                {entry.details.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>

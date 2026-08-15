@@ -1,0 +1,333 @@
+.journeyLegend {
+    display: flex;
+    justify-content: center;
+    gap: 34px;
+    flex-wrap: wrap;
+    margin: 26px 0 54px;
+}
+
+/* A caption, not a control: no pill, no border, no fill — only the marker it
+   stands for, so nothing here reads as clickable. */
+.legendChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.98rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-muted);
+}
+
+.legendDot {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.legendDot svg {
+    width: 16px;
+    height: 16px;
+}
+
+.legendChip.study .legendDot {
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+.legendChip.work .legendDot {
+    background-color: var(--accent);
+    color: var(--ink);
+}
+
+/* ---- The two-lane timeline ---- */
+
+.journeyTimeline {
+    --axis: 132px;
+    --dot-size: 38px;
+    --card-gap: 24px;
+    --spine-progress: 100%; /* JS overrides this on scroll; full line is the fallback */
+
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr var(--axis) 1fr;
+    row-gap: 30px;
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    text-align: left;
+}
+
+.journeySpine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 2px;
+    background-color: rgba(20, 23, 30, 0.12);
+    overflow: hidden;
+}
+
+.journeySpineFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--spine-progress);
+    background-color: var(--accent);
+}
+
+/* ---- Axis marker: dot + date range ---- */
+
+.journeyMarker {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+}
+
+.journeyDot {
+    display: grid;
+    place-items: center;
+    width: var(--dot-size);
+    height: var(--dot-size);
+    border-radius: 50%;
+    /* The white ring punches the dot through the spine behind it. */
+    box-shadow: 0 0 0 6px #ffffff;
+}
+
+.journeyMarker.study .journeyDot {
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+.journeyMarker.work .journeyDot {
+    background-color: var(--accent);
+    color: var(--ink);
+}
+
+.journeyPeriod {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.35;
+    color: var(--ink-muted);
+}
+
+.markerPeriod {
+    text-align: center;
+}
+
+.cardPeriod {
+    display: none;
+}
+
+/* ---- Cards ---- */
+
+.journeyCard {
+    position: relative;
+    background-color: var(--card);
+    border: 1px solid var(--line-light);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 22px 24px;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.5s ease,
+                box-shadow 0.25s ease;
+}
+
+.journeyCard.study {
+    grid-column: 1;
+    margin-right: var(--card-gap);
+    border-right: 3px solid var(--dark);
+}
+
+.journeyCard.work {
+    grid-column: 3;
+    margin-left: var(--card-gap);
+    border-left: 3px solid var(--accent);
+}
+
+.journeyCard:hover {
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* Hairline joining the card to its dot on the axis. */
+.journeyCard::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--dot-size) / 2 - 1px);
+    width: calc(var(--card-gap) + var(--axis) / 2 - var(--dot-size) / 2);
+    height: 2px;
+    background-color: var(--line-light);
+}
+
+.journeyCard.study::after {
+    right: calc(-1 * (var(--card-gap) + var(--axis) / 2 - var(--dot-size) / 2));
+}
+
+.journeyCard.work::after {
+    left: calc(-1 * (var(--card-gap) + var(--axis) / 2 - var(--dot-size) / 2));
+}
+
+.journeyTag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.journeyCard.study .journeyTag {
+    color: var(--ink);
+    opacity: 0.55;
+}
+
+.journeyCard.work .journeyTag {
+    color: var(--accent-strong);
+}
+
+.journeyTitle {
+    margin: 0 0 2px;
+    color: var(--ink);
+}
+
+.journeyOrg {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+}
+
+.journeySummary {
+    margin: 10px 0 0;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+}
+
+.journeyDetails {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+}
+
+.journeyDetails li {
+    margin-bottom: 2px;
+}
+
+.journeyCard.study .journeyDetails li::marker {
+    color: var(--dark);
+}
+
+.journeyCard.work .journeyDetails li::marker {
+    color: var(--accent);
+}
+
+.journeyLink {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+}
+
+.journeyLink:hover {
+    color: var(--ink);
+}
+
+/* ---- Scroll reveal ---- */
+
+.journeyReveal {
+    opacity: 0;
+}
+
+.journeyReveal.revealLeft {
+    transform: translateX(-26px);
+}
+
+.journeyReveal.revealRight {
+    transform: translateX(26px);
+}
+
+.journeyReveal.revealPop {
+    transform: scale(0.8);
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.45s ease;
+}
+
+/* Last, so it wins the tie against the three starting states above. */
+.journeyReveal.isRevealed {
+    opacity: 1;
+    transform: none;
+}
+
+@media (max-width: 900px) {
+    .journeyTimeline {
+        --axis: var(--dot-size);
+        grid-template-columns: var(--dot-size) 1fr;
+        row-gap: 22px;
+    }
+
+    /* One column: left/right no longer says which track an entry is, so the
+       coloured edge and the tag on each card carry it instead. */
+    .journeySpine {
+        left: calc(var(--dot-size) / 2);
+    }
+
+    .journeyMarker {
+        grid-column: 1;
+    }
+
+    .markerPeriod {
+        display: none;
+    }
+
+    .cardPeriod {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .journeyCard.study,
+    .journeyCard.work {
+        grid-column: 2;
+        margin: 0 0 0 20px;
+        border-right: 1px solid var(--line-light);
+        border-left-width: 3px;
+        border-left-style: solid;
+    }
+
+    .journeyCard.study {
+        border-left-color: var(--dark);
+    }
+
+    .journeyCard.work {
+        border-left-color: var(--accent);
+    }
+
+    .journeyCard::after {
+        display: none;
+    }
+
+    .journeyReveal.revealLeft,
+    .journeyReveal.revealRight {
+        transform: translateY(18px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .journeyReveal,
+    .journeyReveal.revealLeft,
+    .journeyReveal.revealRight,
+    .journeyReveal.revealPop {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

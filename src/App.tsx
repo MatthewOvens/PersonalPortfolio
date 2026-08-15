@@ -2,7 +2,7 @@ import Projects from './components/Projects';
 import Contacts from './components/Contacts';
 import Introduction from './components/Introduction';
 import NavBar from './components/NavBar';
-import Education from './components/Education';
+import Journey from './components/Journey';
 import Footer from './components/Footer';
 import './App.css';
 
@@ -102,8 +102,8 @@ const App = () => {
       <div className='projects' id='projects'>
         <Projects />
       </div>
-      <div className='education' id='education'>
-        <Education />
+      <div className='journey' id='journey'>
+        <Journey />
       </div>
       <div className='contacts' id='contacts'>
         <Contacts />

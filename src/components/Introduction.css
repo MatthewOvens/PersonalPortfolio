@@ -170,19 +170,10 @@
     margin-right: -55px;
 }
 
+/* Drawn solid: the dash offset that used to hide the stroke between animation
+   cycles is gone, so the arrow simply sits there. */
 .arrow {
-    stroke-dasharray: 48;
-    stroke-dashoffset: 48;
-    animation: arrowSign 3s linear infinite;
-}
-
-@keyframes arrowSign {
-    from {
-        stroke-dashoffset: 48;
-    }
-    to {
-         stroke-dashoffset: 0;
-     }
+    stroke-dashoffset: 0;
 }
 
 @media (max-width: 900px) {

@@ -231,6 +231,29 @@
     color: var(--accent);
 }
 
+/* Same family as the .skill chips in the project dialog, but static: a soft
+   rectangle instead of a bordered pill, so a row of them reads as labels
+   rather than a row of buttons. */
+.journeySkills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 16px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--line-light);
+    list-style: none;
+}
+
+.journeySkill {
+    background-color: var(--accent-soft);
+    color: var(--ink-muted);
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
 .journeyLink {
     display: inline-block;
     margin-top: 12px;

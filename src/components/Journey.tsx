@@ -115,6 +115,13 @@ const Journey = () => {
                   ))}
                 </ul>
               )}
+              {entry.skills && entry.skills.length > 0 && (
+                <ul className='journeySkills'>
+                  {entry.skills.map((skill) => (
+                    <li key={skill} className='journeySkill'>{skill}</li>
+                  ))}
+                </ul>
+              )}
               {entry.link && (
                 <a className='journeyLink' href={entry.link.href}>
                   {entry.link.label}

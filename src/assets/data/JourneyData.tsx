@@ -11,6 +11,8 @@ export interface JourneyEntry {
     org: string;
     summary?: string;
     details?: string[];
+    /** Tools and methods used, shown as tags at the foot of the card. */
+    skills?: string[];
     /** Link to the related case study, once one exists in ProjectsData. */
     link?: { label: string; href: string };
 }
@@ -22,7 +24,8 @@ const journeyData: JourneyEntry[] = [
         period: "Jan 2025 - Jul 2026",
         title: "Co-founder, UI Developer",
         org: "Halfpast - Zurich, Switzerland (remote)",
-        summary: "Took a mobile app from concept to beta with a team of three, owning product design end to end: user research, user flows, Figma prototypes and UI components."
+        summary: "Took a mobile app from concept to beta with a team of three, owning product design end to end: user research, user flows, Figma prototypes and UI components.",
+        skills: ["User Research", "Figma", "User-centered design", "GA4", "Premiere", "Adobe Fresco", "Canva"]
     },
     {
         track: "work",
@@ -30,7 +33,8 @@ const journeyData: JourneyEntry[] = [
         period: "Mar 2024 - Feb 2025",
         title: "UI Developer",
         org: "Hydromea - Lausanne, Switzerland",
-        summary: "Designed and shipped features for Navia, the control software of an underwater inspection ROV, turning requirements gathered from its operators into interface decisions."
+        summary: "Designed and shipped features for Navia, the control software of an underwater inspection ROV, turning requirements gathered from its operators into interface decisions.",
+        skills: ["Python", "PyQt", "Qt Designer", "Figma", "User-centered design", "Adobe Illustrator", "Photoshop", "Agile scrum"]
     },
     {
         track: "study",
@@ -50,7 +54,8 @@ const journeyData: JourneyEntry[] = [
         period: "Jul 2021 - Sep 2022",
         title: "Web Developer",
         org: "Bit srl - Turin, consultant at Healthy Reply, Milan",
-        summary: "Full-stack development of the SBBL web application for the Lombardy region, working in an Agile team across the Angular front end and the SpringBoot back end."
+        summary: "Full-stack development of the SBBL web application for the Lombardy region, working in an Agile team across the Angular front end and the SpringBoot back end.",
+        skills: ["Angular", "TypeScript", "SpringBoot", "Agile scrum"]
     },
     {
         track: "study",

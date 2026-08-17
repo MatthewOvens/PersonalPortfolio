@@ -70,26 +70,6 @@
     margin-top: 4px;
 }
 
-.my-logo:hover {
-
-    .logoSign {
-        stroke-dasharray: 281;
-        stroke-dashoffset: 281;
-        animation: logoAnimation 3s linear;
-        cursor: pointer;
-    }
-
-}
-
-@keyframes logoAnimation {
-    from {
-        stroke-dashoffset: 281;
-    }
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
 @media (max-width: 640px) {
     .navlinks {
         gap: 22px;

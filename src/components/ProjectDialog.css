@@ -1,122 +1,450 @@
-/* Bootstrap modal overrides */
-.modal-content {
+/* ---------------------------------------------------------------------------
+   Project case study
+   A dialog built out of the same pieces as the rest of the page: dark accent
+   band on top (like the Introduction), light editorial body with an eyebrow +
+   title rail (like the section headers), soft cards and accent chips.
+   Everything is scoped to .projectDialog so Bootstrap's modal defaults are only
+   overridden here.
+--------------------------------------------------------------------------- */
+
+.projectDialog {
+    --hero-height: clamp(190px, 26vh, 260px);
+    --rail: 190px;
+    --gutter: clamp(20px, 4vw, 48px);
+}
+
+/* The overlay is what scrolls, so its scrollbar runs over the dark backdrop
+   rather than over the dialog. Toned down to match it. */
+.projectModal {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(252, 252, 252, 0.32) transparent;
+}
+
+.projectModal::-webkit-scrollbar {
+    width: 10px;
+}
+
+.projectModal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.projectModal::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+    background-color: rgba(252, 252, 252, 0.32);
+}
+
+.projectModal::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(252, 252, 252, 0.5);
+}
+
+/* Bootstrap's stylesheet is imported after this file, so every rule that
+   competes with a .modal-* default is qualified with .projectDialog (on the
+   .modal-dialog element) to outrank it on specificity instead of order. */
+.projectDialog .projectDialogContent {
+    position: relative;
     border: none;
-    border-radius: 20px;
+    border-radius: 22px;
+    /* Trims the hero and the footer to the rounded corners. */
     overflow: hidden;
     font-family: var(--font-body);
     color: var(--ink);
+    background-color: var(--card);
+    box-shadow: 0 30px 80px rgba(15, 18, 24, 0.35);
 }
 
-.modal-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--line-light);
+/* Only one modal exists in the app, so dimming the shared backdrop a little
+   further is safe and keeps the focus on the case study. Set through
+   Bootstrap's own variable, qualified with body to win on specificity. */
+body .modal-backdrop {
+    --bs-backdrop-opacity: 0.72;
 }
 
-.modal-footer {
-    border-top: 1px solid var(--line-light);
-    padding: 1rem 2rem;
+/* ---- Close button, floating over the hero ---- */
+
+.projectClose {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    min-width: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(252, 252, 252, 0.25);
+    background-color: rgba(20, 23, 30, 0.55);
+    color: var(--light);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.dialogTitle {
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
+.projectClose:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--ink);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ---- Hero ---- */
+
+.projectHero {
+    position: relative;
+    min-height: var(--hero-height);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--gutter);
+    overflow: hidden;
+    color: var(--light);
+    background:
+        radial-gradient(700px 380px at 85% -20%, rgba(255, 160, 0, 0.22), transparent 60%),
+        var(--dark);
+}
+
+/* The cover sits behind the text, dimmed enough for the title to stay legible
+   at any image brightness. */
+.projectHeroImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.32;
+}
+
+.projectHero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(20, 23, 30, 0.94) 10%, rgba(20, 23, 30, 0.55) 60%, rgba(20, 23, 30, 0.25) 100%);
+}
+
+.projectHeroInner {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    max-width: 760px;
+}
+
+.projectHeroEyebrow {
+    display: inline-block;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+}
+
+.projectHeroTitle {
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--light);
+}
+
+.projectHeroMeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--light-muted);
+}
+
+.metaDot {
+    margin-right: 6px;
+    color: var(--accent);
+}
+
+/* ---- Body ---- */
+
+/* The scroll container itself: no padding, so the hero can bleed edge to edge
+   at the top of it. The padding belongs to .projectContent below. */
+.projectDialog .projectBody {
+    padding: 0;
+    background-color: var(--card);
+}
+
+.projectContent {
+    padding: clamp(28px, 4vw, 44px) var(--gutter);
+}
+
+.projectChapter {
+    display: grid;
+    grid-template-columns: var(--rail) 1fr;
+    gap: clamp(16px, 3vw, 40px);
+    padding: clamp(24px, 3vw, 34px) 0;
+    text-align: left;
+    border-top: 1px solid var(--line-light);
+    opacity: 0;
+    animation: chapterIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.projectChapter:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+@keyframes chapterIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Static on purpose: the dialog scrolls as one document, so nothing inside it
+   trails the reader. */
+.chapterHead {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    align-self: start;
+}
+
+.chapterIndex {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.chapterLabel {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 600;
     color: var(--ink);
 }
 
-.location {
-    font-size: 0.9rem;
+.chapterHint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.78rem;
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--ink-muted);
-    margin-top: 4px;
 }
 
-.content {
-    padding: 2rem;
-}
-
-.content1,
-.content2 {
+.chapterBody {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-    text-align: left;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: clamp(18px, 3vw, 32px);
 }
 
-.dialogText {
-    flex: 1;
+.chapterText {
+    flex: 1 1 280px;
+    min-width: 0;
+}
+
+.chapterParagraph {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 1.02rem;
     line-height: 1.7;
     color: var(--ink-muted);
 }
 
-.image1Container {
-    width: 50%;
-    flex-shrink: 0;
+.chapterPoints {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
 }
 
-.image1 {
+.chapterPoints li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 0.97rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+}
+
+.chapterPoints li::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0.62em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--accent);
+}
+
+.chapterFigure {
+    flex: 1 1 260px;
+    margin: 0;
+    min-width: 0;
+}
+
+.chapterFigure img {
+    display: block;
     width: 100%;
     border-radius: 14px;
+    border: 1px solid var(--line-light);
     box-shadow: var(--shadow-card);
 }
 
-.content3 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 0.5rem;
+/* Alternate the image side chapter by chapter so the three blocks don't read
+   as one repeated row. */
+.projectChapter:nth-child(even) .chapterFigure {
+    order: -1;
+}
+
+/* ---- Acquired skills ---- */
+
+.projectSkills {
+    padding-top: clamp(24px, 3vw, 34px);
     border-top: 1px solid var(--line-light);
+    text-align: left;
 }
 
-.skillstitle {
-    margin: 1.5rem 0 0.5rem;
-    color: var(--ink);
+.projectSkillsTitle {
+    margin: 0 0 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
 }
 
-.takeaways {
+.projectSkillsList {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    padding: 1rem 0;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .skill {
     background-color: var(--accent-soft);
     color: var(--accent-strong);
     border: 1px solid rgba(255, 160, 0, 0.35);
-    padding: 0.45rem 1rem;
+    padding: 0.4rem 0.9rem;
     border-radius: 999px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    line-height: 1.4;
 }
 
-.skill:hover {
+/* ---- Footer ---- */
+
+.projectDialog .projectFooter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 50px;
+    padding: 1rem var(--gutter);
+    border-top: 1px solid var(--line-light);
+    background-color: var(--paper);
+}
+
+/* Bootstrap spaces footer children with margins; the gap above does it here. */
+.projectDialog .projectFooter > * {
+    margin: 0;
+}
+
+.projectVisit {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+}
+
+.projectVisit:hover {
+    color: var(--ink);
+}
+
+.projectCloseText {
+    margin-left: auto;
+    min-width: 130px;
+    background-color: var(--ink);
+    color: var(--light);
+}
+
+.projectCloseText:hover {
     background-color: var(--accent);
     color: var(--ink);
-    transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-    .content1,
-    .content2 {
-        flex-direction: column;
+/* ---- Responsive ---- */
+
+@media (max-width: 991px) {
+    /* One column: the rail becomes a heading line above its chapter. */
+    .projectChapter {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 767px) {
+    /* Fullscreen on phones: square off the corners and let the body scroll. */
+    .projectDialog .projectDialogContent {
+        border-radius: 0;
     }
 
-    .content2 {
-        flex-direction: column-reverse;
+    /* Bootstrap's fullscreen mode locks the card to the viewport height and
+       scrolls .modal-body inside it — which puts a scrollbar back inside the
+       dialog, running across the hero. Let the card grow with its content
+       instead, so the overlay stays the only scroll container, exactly as on
+       desktop. Both selectors need .projectDialog.modal-fullscreen-md-down to
+       outrank Bootstrap's own two-class rules. */
+    .projectDialog.modal-fullscreen-md-down,
+    .projectDialog.modal-fullscreen-md-down .projectDialogContent {
+        height: auto;
+        min-height: 100%;
     }
 
-    .image1Container {
+    .projectDialog.modal-fullscreen-md-down .projectBody {
+        overflow: visible;
+    }
+
+    .projectHero {
+        align-items: flex-end;
+        padding-top: 64px;
+    }
+
+    .projectChapter:nth-child(even) .chapterFigure {
+        order: 0;
+    }
+
+    .chapterFigure {
+        flex-basis: 100%;
+    }
+
+    .projectFooter {
+        justify-content: stretch;
+    }
+
+    .projectVisit,
+    .projectCloseText {
         width: 100%;
+        text-align: center;
+    }
+
+    .projectCloseText {
+        margin-left: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .projectChapter {
+        opacity: 1;
+        animation: none;
     }
 }

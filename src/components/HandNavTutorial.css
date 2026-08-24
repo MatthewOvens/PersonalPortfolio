@@ -103,15 +103,22 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 6px;
+  gap: 10px;
   padding: 20px 0;
 }
 .hnt-section + .hnt-section {
   border-top: 1px solid var(--line-dark);
 }
 
+/* Stretched to the section's full width and centring its own contents: the
+   clip is often narrower than this wrapper (max-height shrinks it), and without
+   this it would sit flush left while the rest of the step is centred. */
 .hnt-illustration {
-  margin-bottom: 10px;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
   min-height: 0;
 }
 
@@ -119,10 +126,11 @@
    viewport) so the clip shrinks in step with the space the section actually
    has. */
 .hnt-video {
-  max-width: min(400px, 84%);
-  max-height: min(calc(var(--hnt-card-h) * 0.4), 280px);
+  max-width: min(460px, 90%);
+  max-height: min(calc(var(--hnt-card-h) * 0.48), 340px);
   border-radius: 16px;
   display: block;
+  margin-inline: auto;
   object-fit: contain;
   background: #000;
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
@@ -136,22 +144,30 @@
   font-size: 0.82rem;
   font-weight: 700;
 }
+/* Still an <h3> for document structure, but deliberately styled as plain body
+   text: with no description under it, a bold heading looked stranded. */
 .hnt-panel-title {
   margin: 0;
-  color: var(--light);
-}
-.hnt-panel-body {
-  margin: 6px 0 0;
   color: var(--light-muted);
-  font-size: 1rem;
-  line-height: 1.6;
-  max-width: 42ch;
+  font-size: clamp(0.98rem, 2.2vw, 1.12rem);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  max-width: 34ch;
+}
+
+.hnt-cta-cue {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
 }
 
 .hnt-cta {
   display: block;
   flex: none;
-  margin: 48px auto 8px;
+  margin: 10px auto 8px;
   min-width: min(340px, 100%);
   min-height: 62px;
   padding: 16px 36px;
@@ -159,11 +175,12 @@
   border-radius: 18px;
   background: var(--accent);
   color: var(--ink);
+  animation: hnt-cta-glow 1.8s ease-in-out infinite;
 }
 
 /* --- Detection status (step 01) ------------------------------------------ */
 .hnt-status {
-  margin-top: 20px;
+  margin-top: 26px;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -194,18 +211,11 @@
 
 /* --- Scroll hint --------------------------------------------------------- */
 .hnt-hint {
-  margin-top: 22px;
+  margin-top: 26px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
   color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-.hnt-hint span {
-  margin-right: -0.06em; /* see .hnt-eyebrow */
 }
 .hnt-chevrons {
   animation: hnt-chev 1.6s ease-in-out infinite;
@@ -225,7 +235,11 @@
 }
 @keyframes hnt-chev {
   0%, 100% { transform: translateY(0); opacity: 1; }
-  50% { transform: translateY(4px); opacity: 0.6; }
+  50% { transform: translateY(7px); opacity: 0.6; }
+}
+@keyframes hnt-cta-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 160, 0, 0.45); }
+  50% { box-shadow: 0 0 0 12px rgba(255, 160, 0, 0); }
 }
 @keyframes hnt-pulse {
   0%, 100% { opacity: 0.3; }
@@ -242,7 +256,8 @@
     scroll-behavior: auto;
   }
   .hnt-chevrons,
-  .hnt-status-dot {
+  .hnt-status-dot,
+  .hnt-cta {
     animation: none !important;
   }
 }
@@ -256,18 +271,20 @@
     padding: 14px 0;
   }
   .hnt-illustration {
-    margin-bottom: 4px;
+    margin-bottom: 10px;
   }
-  .hnt-panel-body {
-    font-size: 0.92rem;
-    line-height: 1.5;
+  .hnt-panel-title {
+    font-size: 0.95rem;
   }
   .hnt-status,
   .hnt-hint {
     margin-top: 12px;
   }
+  .hnt-cta-cue {
+    margin-top: 18px;
+  }
   .hnt-cta {
-    margin-top: 32px;
+    margin-top: 6px;
     min-height: 54px;
     padding: 12px 32px;
     font-size: 1rem;

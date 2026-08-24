@@ -23,29 +23,26 @@ const GestureClip = ({ src }: { src: string }) => (
 interface Panel {
   n: string;
   title: string;
-  body: string;
   illustration: React.ReactNode;
-  hint?: string;
+  /** Draws the "keep scrolling" arrow under the step. */
+  scrollCue?: boolean;
 }
 
 const panels: Panel[] = [
   {
     n: '01',
     title: 'Wave at the camera',
-    body: 'Hold your open hand up to the webcam, until the skeleton appears.',
     illustration: <GestureClip src={helloVideo} />,
   },
   {
     n: '02',
     title: 'Pinch to scroll',
-    body: 'Pinch index finger and thumb together, then move your hand up and down. Try it now!',
     illustration: <GestureClip src={pinchVideo} />,
-    hint: 'Keep scrolling for the last step',
+    scrollCue: true,
   },
   {
     n: '03',
     title: 'Make a fist to click',
-    body: 'Move the cursor onto whatever you want, then close your hand into a fist. Try it on the button below.',
     illustration: <GestureClip src={clickVideo} />,
   },
 ];
@@ -151,7 +148,6 @@ const HandNavTutorial = ({ handVisible, onClose }: HandNavTutorialProps) => {
                 <div className="hnt-illustration">{p.illustration}</div>
                 <span className="hnt-panel-n">{p.n}</span>
                 <h3 className="hnt-panel-title">{p.title}</h3>
-                <p className="hnt-panel-body">{p.body}</p>
 
                 {/* Step 01 reports what the camera sees, so the visitor knows
                     whether to keep waving or to expect the auto-scroll. */}
@@ -166,10 +162,9 @@ const HandNavTutorial = ({ handVisible, onClose }: HandNavTutorialProps) => {
                   </div>
                 )}
 
-                {i < panels.length - 1 && p.hint && (
-                  <div className="hnt-hint">
-                    <span>{p.hint}</span>
-                    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="hnt-chevrons">
+                {i < panels.length - 1 && p.scrollCue && (
+                  <div className="hnt-hint" role="img" aria-label="Keep scrolling for the last step">
+                    <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true" className="hnt-chevrons">
                       <path d="M6 9 L12 15 L18 9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M6 4 L12 10 L18 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="hnt-chevron-2" />
                     </svg>
@@ -179,9 +174,18 @@ const HandNavTutorial = ({ handVisible, onClose }: HandNavTutorialProps) => {
                 {/* The button belongs to the last step, so the fist gesture has
                     something to aim at without scrolling any further. */}
                 {i === panels.length - 1 && (
-                  <button className="hnt-cta" onClick={onClose}>
-                    Start navigating
-                  </button>
+                  <>
+                    {/* Points at the button so it reads as the thing to aim the
+                        fist at, now that no body copy says so. */}
+                    <div className="hnt-cta-cue" role="img" aria-label="Click the button below">
+                      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" className="hnt-chevrons">
+                        <path d="M6 9 L12 15 L18 9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <button className="hnt-cta" onClick={onClose}>
+                      Start navigating
+                    </button>
+                  </>
                 )}
               </section>
             ))}

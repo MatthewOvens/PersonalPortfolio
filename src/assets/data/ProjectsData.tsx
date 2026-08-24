@@ -39,7 +39,7 @@ const projectData: ProjectData[] = [{
         role: "Design & Development",
         description: "A web-based arcade game built from scratch",
         image: [snacmanHeader, snacman2, snacman3],
-        link: "https://www.google.com",
+        link: "https://matthewovens.github.io/SnakeMan/",
         concept: {
             text: "An arcade classic rebuilt for the browser, with the goal of making the whole game playable in a single tab, with no install and no account.",
             points: [

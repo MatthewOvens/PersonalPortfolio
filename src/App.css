@@ -69,9 +69,12 @@ button:hover {
   border-top: 1px solid var(--line-dark);
 }
 
+/* Above every overlay on the page, Bootstrap's modals included (backdrop 1050,
+   modal 1055): the tracked hand has to stay visible over whatever it is being
+   used to navigate — the project case-study dialog above all. */
 .output_canvas {
   position: fixed;
-  z-index: 999;
+  z-index: 2000;
   pointer-events: none; /* Let clicks/hover pass through to the page below */
   width: 100vw;
   height: 100vh;
@@ -94,7 +97,7 @@ button:hover {
   background-color: rgba(176, 30, 176, 0.15);
   box-shadow: 0 0 12px rgba(176, 30, 176, 0.5);
   pointer-events: none; /* so elementFromPoint hits the real page element */
-  z-index: 1000;
+  z-index: 2001; /* one above the skeleton — see .output_canvas */
   transform: translate(-50%, -50%);
   transition: transform 90ms ease, background-color 90ms ease, border-color 90ms ease;
   display: none; /* shown only while a hand is tracked */

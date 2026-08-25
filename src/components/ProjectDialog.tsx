@@ -1,5 +1,7 @@
 import Modal from 'react-bootstrap/Modal';
+import { useEffect } from 'react';
 import { ProjectChapter, ProjectData } from '../assets/data/ProjectsData';
+import { setScrollTarget } from '../utils/scrollTarget';
 import './ProjectDialog.css';
 
 interface ProjectDialogProps {
@@ -58,6 +60,19 @@ const Chapter = ({
 );
 
 const ProjectDialog = ({ show, onHide, projectData }: ProjectDialogProps) => {
+    // While the dialog is open it — not the page — is what the pinch-scroll
+    // gesture has to drive: Bootstrap locks the body scroll behind an open
+    // modal, so a hand scroll aimed at the window would simply do nothing.
+    // `.projectModal` (the overlay) is the element that actually scrolls; see
+    // the note on `scrollable` below.
+    //
+    // Declared before the early return below so the hook order never changes.
+    useEffect(() => {
+        if (!show) return;
+        setScrollTarget(document.querySelector<HTMLElement>('.projectModal'));
+        return () => setScrollTarget(null);
+    }, [show]);
+
     if (!projectData) return null;
 
     const meta = [projectData.period, projectData.role, projectData.location].filter(Boolean);
@@ -77,6 +92,16 @@ const ProjectDialog = ({ show, onHide, projectData }: ProjectDialogProps) => {
             // card with this much content wastes the little room there is.
             fullscreen='md-down'
             className='projectModal'
+            // On close the focus goes back to whatever held it before the
+            // dialog opened — and a plain focus() scrolls that element into
+            // view. The project cards are non-focusable <div>s (and a fist
+            // click is a synthetic MouseEvent, which moves no focus at all), so
+            // that element is usually the hand-nav button up in the hero: the
+            // page would jump back to the top on every close.
+            restoreFocusOptions={{ preventScroll: true }}
+            // The overlay only lands in the DOM once the open transition runs,
+            // which can be after the effect above has already looked for it.
+            onEntered={(node: HTMLElement) => setScrollTarget(node)}
             dialogClassName='projectDialog'
             contentClassName='projectDialogContent'
             aria-labelledby='projectDialogTitle'

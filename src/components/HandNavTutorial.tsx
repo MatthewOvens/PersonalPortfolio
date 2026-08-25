@@ -72,7 +72,9 @@ const HandNavTutorial = ({ handVisible, onClose }: HandNavTutorialProps) => {
     return () => {
       setScrollTarget(null);
       document.body.style.overflow = prevOverflow;
-      previouslyFocused?.focus();
+      // preventScroll: restoring focus otherwise scrolls the focused element
+      // back into view, yanking the page away from where the visitor was.
+      previouslyFocused?.focus({ preventScroll: true });
       if (advanceTimerRef.current != null) {
         window.clearTimeout(advanceTimerRef.current);
       }

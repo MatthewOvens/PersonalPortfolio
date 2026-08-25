@@ -1,7 +1,7 @@
 /* ============================================================================
    Hand-navigation tutorial — a scroll-through overlay the visitor navigates
    with the very gestures it teaches. Sits at z-index 500: below the live
-   skeleton (999) and cursor (1000) so the tracked hand stays visible on top,
+   skeleton (2000) and cursor (2001) so the tracked hand stays visible on top,
    above the dimmed page behind.
    ============================================================================ */
 

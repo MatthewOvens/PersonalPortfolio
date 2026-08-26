@@ -51,9 +51,11 @@
 
 .projectBox:hover .projectImage,
 .projectBox:focus-within .projectImage {
-    /* Lifts a little on approach, without ever competing with the text. */
-    filter: brightness(0.55) saturate(0.95);
-    transform: scale(1.06);
+    /* Lifts a little on approach, without ever competing with the text. The
+       scale stays modest but has to be readable on a cover with no detail to
+       track — a near-flat gradient hides a 6% move almost completely. */
+    filter: brightness(0.75) saturate(0.95);
+    transform: scale(1.09);
 }
 
 /* ---- Date ---------------------------------------------------------------

@@ -16,6 +16,9 @@
    grows the card downward instead of spilling out of it. */
 .projectBox {
     position: relative;
+    /* Own stacking context, so the cover below can sit at z-index -1 without
+       falling behind the card's own background. */
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -40,6 +43,10 @@
 .projectImage {
     position: absolute;
     inset: 0;
+    /* Behind the content but inside the card: this is what lets the text block
+       above stay unpositioned, which in turn is what lets the stretched hit
+       area below resolve against the whole card. */
+    z-index: -1;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -91,8 +98,11 @@
 
 /* ---- Content ----------------------------------------------------------- */
 
+/* Deliberately not positioned: `.projectOpen::after` stretches to its nearest
+   positioned ancestor, and that has to be the card, not this block, or only the
+   bottom of the card would open the project. It still paints over the cover,
+   which is pushed behind it with a negative z-index. */
 .projectTxt {
-    position: relative; /* over the cover, which is absolutely positioned */
     display: flex;
     flex-direction: column;
     gap: 8px;

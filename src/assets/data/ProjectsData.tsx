@@ -22,9 +22,9 @@ export interface ProjectData {
     location: string;
     /**
      * When the project was made, ISO-style: "2024", "2024-03" or "2024-03-18".
-     * It is the single source of truth for anything date-related — it orders
-     * the grid (newest first) and is printed on the card and in the case-study
-     * header — so the precision is up to you: a bare year renders as "2024", a
+     * It is the single source of truth for anything date-related, it orders the
+     * grid (newest first) and is printed on the card and in the case-study
+     * header, so the precision is up to you: a bare year renders as "2024", a
      * month as "Mar 2024". Within the same year, a bare year counts as the
      * earliest entry.
      */
@@ -49,37 +49,23 @@ const projectData: ProjectData[] = [{
         location: "University Project - Paris, France",
         date: "2024",
         role: "Design & Development, team of 3",
-        description: "A music station played with hands, voice and heartbeat — never with a mouse",
+        description: "A music station played with hands, voice and heartbeat, never with a mouse",
         image: [tuneCrafterHeader, tuneCrafterLogo],
         link: "https://allescava.github.io/Tune-Crafter/",
         concept: {
-            text: "A laptop turned into an instrument nobody touches. Tune Crafter puts a small DJ booth behind the webcam: the hands shape the sound, the voice runs the transport, and a smartwatch feeds the room the heartbeat of whoever is playing. Built with Alessandro Cavallotti and Shubhankar for HCI909 — Advanced Programming of Interactive Systems.",
-            points: [
-                "Webcam, microphone and smartwatch as the only input devices — no mouse, no keyboard",
-                "Each channel doing what it is best at: hands for continuous control, voice for discrete commands",
-                "Learnable in one sitting: a legend of the vocabulary on screen, and a live readout of what the machine thinks it just saw"
-            ],
+            text: "A laptop turned into an instrument nobody touches. The hands shape the sound, the voice runs the transport, a smartwatch feeds in the heartbeat of whoever is playing. Built with Alessandro Cavallotti and Shubhankar for HCI909, Advanced Programming of Interactive Systems.",
             image: tuneCrafterLogo
         },
         how: {
-            text: "A React front end reads three live signals at once — hand landmarks from the webcam, words from the microphone, and heart rate pushed in from a Wear OS watch — and turns them into calls on a Web Audio engine drawn as a waveform.",
+            text: "React reads three live signals at once, hand landmarks from the webcam, words from the microphone and heart rate from a Wear OS watch, and turns them into calls on a Web Audio engine drawn as a waveform.",
             points: [
-                "MediaPipe Tasks Vision recognises the pose; a state machine per control decides when a pose actually counts as a command",
-                "Sound buffers decoded up front, so a pinch of any finger fires its drum pad — kick, snare, hat, clap — with no load delay",
-                "wavesurfer.js draws the track and owns the loop regions two-handed scissor gestures cut out of it",
-                "Continuous speech recognition for the transport words, plus the switches into the Christmas and piano sound banks",
-                "A Python Socket.IO server bridging the browser and the Wear OS app, streaming heart rate into the visuals",
-                "An analytics event on every gesture and command, to see which interactions people actually found"
+                "MediaPipe reads the pose, a state machine per control decides when it counts as a command",
+                "Pinch a finger and its drum pad fires, scissor gestures cut loop regions out of the track",
+                "A Python Socket.IO server bridges the browser and the watch"
             ]
         },
         learnings: {
-            text: "Gesture recognition hands you probabilities, not intentions. Most of the work lived in the distance between the two: deciding when a pose is a command, and saying out loud what the machine currently believes it sees.",
-            points: [
-                "A two-step pose — open palm, then fist — is what separates a deliberate command from an accidental one",
-                "Constant feedback beats raw accuracy: the readout of the recognised gesture is what makes an invisible vocabulary learnable",
-                "Splitting the modalities by nature, discrete to the voice and continuous to the hands, removed most of the ambiguity",
-                "The hand navigation of this very portfolio grew out of this gesture layer"
-            ]
+            text: "Gesture recognition gives you probabilities, not intentions. The work lived in that gap: deciding when a pose becomes a command, and telling the user what the machine believes it sees. A pose in two steps, open palm then fist, is what separates a deliberate command from an accident. The hand navigation of this portfolio grew out of that layer."
         },
         acquired_skills: ["React", "TypeScript", "MediaPipe", "Web Audio API", "Web Speech API", "Socket.IO", "Python", "Wear OS", "wavesurfer.js", "Finite state machines", "Interaction design", "Vite"]
     },

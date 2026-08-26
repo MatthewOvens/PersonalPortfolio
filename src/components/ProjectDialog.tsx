@@ -1,6 +1,7 @@
 import Modal from 'react-bootstrap/Modal';
 import { useEffect } from 'react';
 import { ProjectChapter, ProjectData } from '../assets/data/ProjectsData';
+import { formatProjectDate } from '../utils/projectDates';
 import { setScrollTarget } from '../utils/scrollTarget';
 import './ProjectDialog.css';
 
@@ -75,7 +76,7 @@ const ProjectDialog = ({ show, onHide, projectData }: ProjectDialogProps) => {
 
     if (!projectData) return null;
 
-    const meta = [projectData.period, projectData.role, projectData.location].filter(Boolean);
+    const meta = [formatProjectDate(projectData.date), projectData.role, projectData.location].filter(Boolean);
 
     return (
         <Modal

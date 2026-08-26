@@ -15,14 +15,21 @@ export interface ProjectChapter {
 export interface ProjectData {
     title: string;
     location: string;
-    /** Human-readable timeframe, shown in the case-study header. */
-    period?: string;
+    /**
+     * When the project was made, ISO-style: "2024", "2024-03" or "2024-03-18".
+     * It is the single source of truth for anything date-related — it orders
+     * the grid (newest first) and is printed on the card and in the case-study
+     * header — so the precision is up to you: a bare year renders as "2024", a
+     * month as "Mar 2024". Within the same year, a bare year counts as the
+     * earliest entry.
+     */
+    date: string;
     /** One-liner used on the card in the projects grid. */
     description: string;
     /** [0] is the cover, used both on the card and as the case-study hero. */
     image: string[];
     link: string;
-    /** Role or short label shown next to the period in the header. */
+    /** Role or short label shown next to the date in the header. */
     role?: string;
     /** The three chapters, identical for every project. */
     concept: ProjectChapter;
@@ -35,7 +42,7 @@ export interface ProjectData {
 const projectData: ProjectData[] = [{
         title: "SnacMan",
         location: "Personal Project - Milan, Italy",
-        period: "2023",
+        date: "2023",
         role: "Design & Development",
         description: "A web-based arcade game built from scratch",
         image: [snacmanHeader, snacman2, snacman3],
@@ -72,7 +79,7 @@ const projectData: ProjectData[] = [{
     {
         title: "Project 2",
         location: "Personal Project - Milan, Italy",
-        period: "2023",
+        date: "2023",
         role: "Design & Development",
         description: "This is a description of project 2",
         image: [snacman2],
@@ -103,7 +110,7 @@ const projectData: ProjectData[] = [{
     {
         title: "Snac-Man",
         location: "Personal Project - Milan, Italy",
-        period: "2022",
+        date: "2022",
         role: "Design & Development",
         description: "A web-based snake game",
         image: [snacmanHeader],
@@ -121,7 +128,7 @@ const projectData: ProjectData[] = [{
     {
         title: "Snac-Man",
         location: "Personal Project - Milan, Italy",
-        period: "2022",
+        date: "2022",
         role: "Design & Development",
         description: "A web-based snake game",
         image: [snacmanHeader],

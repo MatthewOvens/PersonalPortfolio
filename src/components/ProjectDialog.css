@@ -9,7 +9,11 @@
 
 .projectDialog {
     --hero-height: clamp(190px, 26vh, 260px);
-    --rail: 190px;
+    /* The text takes the rest of the row, so the image column is the one that
+       gets sized: kept under 40% so the prose always has the wider half.
+       --rail-bare is the head-only rail a chapter with no image falls back to. */
+    --figure-col: clamp(240px, 42%, 420px);
+    --rail-bare: 190px;
     --gutter: clamp(20px, 4vw, 48px);
 }
 
@@ -178,15 +182,24 @@ body .modal-backdrop {
     padding: clamp(28px, 4vw, 44px) var(--gutter);
 }
 
+/* Row 1 is the head on its own, row 2 pairs the text with the image so the two
+   share a top edge. The row gap is what sets that shared edge down from the
+   title, so it is deliberately smaller than the column gap. */
 .projectChapter {
     display: grid;
-    grid-template-columns: var(--rail) 1fr;
-    gap: clamp(16px, 3vw, 40px);
+    grid-template-columns: 1fr var(--figure-col);
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(16px, 3vw, 40px);
+    row-gap: clamp(16px, 2vw, 22px);
     padding: clamp(24px, 3vw, 34px) 0;
     text-align: left;
     border-top: 1px solid var(--line-light);
     opacity: 0;
     animation: chapterIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.projectChapter.chapterNoFigure {
+    grid-template-columns: var(--rail-bare) 1fr;
 }
 
 .projectChapter:first-child {
@@ -208,10 +221,12 @@ body .modal-backdrop {
 /* Static on purpose: the dialog scrolls as one document, so nothing inside it
    trails the reader. */
 .chapterHead {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
     display: flex;
     align-items: baseline;
     gap: 12px;
-    align-self: start;
 }
 
 .chapterIndex {
@@ -239,16 +254,18 @@ body .modal-backdrop {
     color: var(--ink-muted);
 }
 
-.chapterBody {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: clamp(18px, 3vw, 32px);
+.chapterText {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    min-width: 0;
 }
 
-.chapterText {
-    flex: 1 1 280px;
-    min-width: 0;
+/* No image to line up with, so the text moves over and climbs back up beside
+   the head, which is all that is left in the rail. */
+.chapterNoFigure .chapterText {
+    grid-column: 2;
+    grid-row: 1 / -1;
 }
 
 .chapterParagraph {
@@ -286,7 +303,9 @@ body .modal-backdrop {
 }
 
 .chapterFigure {
-    flex: 1 1 260px;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
     margin: 0;
     min-width: 0;
 }
@@ -297,12 +316,6 @@ body .modal-backdrop {
     border-radius: 14px;
     border: 1px solid var(--line-light);
     box-shadow: var(--shadow-card);
-}
-
-/* Alternate the image side chapter by chapter so the three blocks don't read
-   as one repeated row. */
-.projectChapter:nth-child(even) .chapterFigure {
-    order: -1;
 }
 
 /* ---- Acquired skills ---- */
@@ -385,10 +398,29 @@ body .modal-backdrop {
 /* ---- Responsive ---- */
 
 @media (max-width: 991px) {
-    /* One column: the rail becomes a heading line above its chapter. */
-    .projectChapter {
+    /* One column: the rail becomes a heading line above its chapter, with the
+       image under the text. The explicit placements above have to be released
+       or they would pull items back into a second column. */
+    .projectChapter,
+    .projectChapter.chapterNoFigure {
         grid-template-columns: 1fr;
+        grid-template-rows: none;
         gap: 14px;
+    }
+
+    .chapterHead,
+    .chapterFigure,
+    .chapterText,
+    .chapterNoFigure .chapterText {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    /* Full width here would blow the image up to the whole dialog, so it keeps
+       a reading-width cap and stays left-aligned with the text. */
+    .chapterFigure {
+        max-width: 560px;
+        margin-bottom: 4px;
     }
 }
 
@@ -419,12 +451,8 @@ body .modal-backdrop {
         padding-top: 64px;
     }
 
-    .projectChapter:nth-child(even) .chapterFigure {
-        order: 0;
-    }
-
     .chapterFigure {
-        flex-basis: 100%;
+        max-width: none;
     }
 
     .projectFooter {

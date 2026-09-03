@@ -31,7 +31,15 @@ const Chapter = ({
 }) => (
     // The delay staggers the chapters as the dialog opens, in the same spirit as
     // the timeline reveal in the Journey section.
-    <section className='projectChapter' style={{ animationDelay: `${120 + index * 90}ms` }}>
+    //
+    // Two columns over two rows: the head sits alone on the first row, the text
+    // and the image share the second, so the image starts level with the top of
+    // the text rather than with the title. Chapters without an image get a
+    // narrow rail and let the text span both rows, back up against the head.
+    <section
+        className={`projectChapter${chapter.image ? '' : ' chapterNoFigure'}`}
+        style={{ animationDelay: `${120 + index * 90}ms` }}
+    >
         <header className='chapterHead'>
             <span className='chapterIndex'>{String(index + 1).padStart(2, '0')}</span>
             <div>
@@ -40,23 +48,22 @@ const Chapter = ({
             </div>
         </header>
 
-        <div className='chapterBody'>
-            <div className='chapterText'>
-                <p className='chapterParagraph'>{chapter.text}</p>
-                {chapter.points && chapter.points.length > 0 && (
-                    <ul className='chapterPoints'>
-                        {chapter.points.map((point) => (
-                            <li key={point}>{point}</li>
-                        ))}
-                    </ul>
-                )}
-            </div>
-            {chapter.image && (
-                <figure className='chapterFigure'>
-                    <img src={chapter.image} alt={`${label} — illustration`} loading='lazy' />
-                </figure>
+        <div className='chapterText'>
+            <p className='chapterParagraph'>{chapter.text}</p>
+            {chapter.points && chapter.points.length > 0 && (
+                <ul className='chapterPoints'>
+                    {chapter.points.map((point) => (
+                        <li key={point}>{point}</li>
+                    ))}
+                </ul>
             )}
         </div>
+
+        {chapter.image && (
+            <figure className='chapterFigure'>
+                <img src={chapter.image} alt={`${label} — illustration`} loading='lazy' />
+            </figure>
+        )}
     </section>
 );
 

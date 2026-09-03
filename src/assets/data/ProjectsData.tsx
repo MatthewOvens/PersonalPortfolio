@@ -3,6 +3,10 @@
 // it is the untouched original it is generated from.
 import tuneCrafterHeader from '../images/tunecrafterheader.svg';
 import tuneCrafterLogo from '../images/tunecrafterlogo.png';
+import tuneCrafterHUD from '../images/tunecrafterHUD.png';
+import naviaHeader from '../images/naviaheader.jpg';
+import naviaPilot from '../images/naviapilot.jpg';
+import naviaOffsite from '../images/naviaoffsite.jpg';
 import snacmanHeader from '../images/snacmanheader.png';
 import snacman2 from '../images/snacman2.png';
 import snacman3 from '../images/snacman3.png';
@@ -45,16 +49,54 @@ export interface ProjectData {
 }
 
 const projectData: ProjectData[] = [{
+        title: "Navia",
+        location: "Master Thesis at Hydromea - Lausanne, Switzerland",
+        date: "2025",
+        role: "UI Design & Development",
+        description: "The interface used to control an underwater inspection drone",
+        image: [naviaHeader, naviaPilot, naviaOffsite],
+        link: "https://www.hydromea.com/",
+        concept: {
+            text: "Navia is the software that drives EXRAY, Hydromea's wireless underwater inspection ROV. My thesis covered its two operating screens, the Pilot Page, redesigned and rebuilt, and the Inspector Page, designed from scratch for the person who documents the dive while the pilot flies.",
+            points: [
+                "Operators found the existing interface unreliable, inconsistent and hard to read mid-dive",
+                "Client policy blocked any direct contact with the real operators for the whole internship",
+                "Everything had to stay usable on a touchscreen, in the field, alongside a physical remote"
+            ],
+            image: naviaHeader
+        },
+        how: {
+            text: "The whole system is Python with PyQt, laid out in Qt Designer and structured as MVC. Telemetry reaches the station as MAVLink messages over UDP, gets filtered and dispatched, then feeds the widgets in real time through Qt signals and slots.",
+            points: [
+                "Built the Pilot Page widgets, notification centre, camera settings, dive checklist, HUD menu and mission panels",
+                "Merged the two drone panels into one, so the Mothership and the Flyout stop fighting for space",
+                "Rewired the Data Page feedback around the backend worker threads, so downloads and post-processing report real progress",
+                "Added a theme system that injects light or dark colour values into the stylesheets at startup"
+            ],
+            image: naviaPilot
+        },
+        learnings: {
+            text: "With the real operators out of reach, I built my own users. A heuristic evaluation with the software team surfaced the first round of problems, then an offsite day at the lake put around thirty colleagues on the controls, each one piloting for five minutes before passing on.",
+            points: [
+                "A persona and a timed challenge got colleagues thinking like inspectors, not like engineers",
+                "A guided think aloud works better than the textbook version when the hands are busy flying",
+                "The sonar map, the 4-clicks measurement and the annotated gallery all came out of a brainstorming poster"
+            ],
+            image: naviaOffsite
+        },
+        acquired_skills: ["Python", "PyQt", "Qt Designer", "QSS", "MVC", "MAVLink", "Figma", "Heuristic evaluation", "Think aloud", "Personas", "User research", "UI design"]
+    },
+    {
         title: "Tune Crafter",
         location: "University Project - Paris, France",
         date: "2024",
         role: "Design & Development, team of 3",
         description: "A music station played with hands, voice and heartbeat, never with a mouse",
-        image: [tuneCrafterHeader, tuneCrafterLogo],
+        image: [tuneCrafterHeader, tuneCrafterHUD, tuneCrafterLogo],
         link: "https://allescava.github.io/Tune-Crafter/",
         concept: {
             text: "A laptop turned into an instrument nobody touches. The hands shape the sound, the voice runs the transport, a smartwatch feeds in the heartbeat of whoever is playing. Built with Alessandro Cavallotti and Shubhankar for HCI909, Advanced Programming of Interactive Systems.",
-            image: tuneCrafterLogo
+            image: tuneCrafterHUD
         },
         how: {
             text: "React reads three live signals at once, hand landmarks from the webcam, words from the microphone and heart rate from a Wear OS watch, and turns them into calls on a Web Audio engine drawn as a waveform.",
@@ -65,7 +107,8 @@ const projectData: ProjectData[] = [{
             ]
         },
         learnings: {
-            text: "Gesture recognition gives you probabilities, not intentions. The work lived in that gap: deciding when a pose becomes a command, and telling the user what the machine believes it sees. A pose in two steps, open palm then fist, is what separates a deliberate command from an accident. The hand navigation of this portfolio grew out of that layer."
+            text: "Gesture recognition gives you probabilities, not intentions. The work lived in that gap: deciding when a pose becomes a command, and telling the user what the machine believes it sees. A pose in two steps, open palm then fist, is what separates a deliberate command from an accident. The hand navigation of this portfolio grew out of that layer.",
+            image: tuneCrafterLogo
         },
         acquired_skills: ["React", "TypeScript", "MediaPipe", "Web Audio API", "Web Speech API", "Socket.IO", "Python", "Wear OS", "wavesurfer.js", "Finite state machines", "Interaction design", "Vite"]
     },

@@ -105,6 +105,13 @@
     color: var(--accent);
 }
 
+/* The two pills are one pair, so they have to end up exactly as tall as each
+   other: the flag is 3:2 and the calendar is square, so the flag is narrowed
+   to 18px to land on the icon's 12px height instead of its own 14px. */
+.projectFlag .flag {
+    width: 18px;
+}
+
 /* ---- Content ----------------------------------------------------------- */
 
 /* Deliberately not positioned: `.projectOpen::after` stretches to its nearest

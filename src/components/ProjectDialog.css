@@ -313,6 +313,15 @@ body .modal-backdrop {
     background-color: var(--accent);
 }
 
+/* The words a chapter turns on, marked with `**` in the project data. Kept to
+   a shade of the body colour rather than the accent: a paragraph with orange
+   scattered through it reads as a list of links. */
+.chapterParagraph strong,
+.chapterPoints strong {
+    color: var(--ink);
+    font-weight: 650;
+}
+
 .chapterFigure {
     grid-column: 2;
     grid-row: 2;

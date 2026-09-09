@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ProjectChapter, ProjectData } from '../assets/data/ProjectsData';
 import { formatProjectDate } from '../utils/projectDates';
 import { setScrollTarget } from '../utils/scrollTarget';
+import { renderRichText } from '../utils/richText';
 import Flag from './Flag';
 import './ProjectDialog.css';
 
@@ -50,11 +51,11 @@ const Chapter = ({
         </header>
 
         <div className='chapterText'>
-            <p className='chapterParagraph'>{chapter.text}</p>
+            <p className='chapterParagraph'>{renderRichText(chapter.text)}</p>
             {chapter.points && chapter.points.length > 0 && (
                 <ul className='chapterPoints'>
                     {chapter.points.map((point) => (
-                        <li key={point}>{point}</li>
+                        <li key={point}>{renderRichText(point)}</li>
                     ))}
                 </ul>
             )}

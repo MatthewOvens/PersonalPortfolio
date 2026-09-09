@@ -164,6 +164,17 @@ body .modal-backdrop {
     color: var(--light-muted);
 }
 
+/* Each entry is its own flex line so the flag in the location sits on the text
+   baseline instead of on the bottom of the box. */
+.metaItem {
+    display: inline-flex;
+    align-items: center;
+}
+
+.projectHeroMeta .flag {
+    margin-right: 7px;
+}
+
 .metaDot {
     margin-right: 6px;
     color: var(--accent);

@@ -65,15 +65,16 @@
     transform: scale(1.09);
 }
 
-/* ---- Date ---------------------------------------------------------------
-   When the project was made, in the same uppercase micro-label voice as the
-   section eyebrows and the timeline periods. Over the cover rather than in the
-   text block: it dates the work at a glance without taking a line away from
-   the title. */
-.projectDate {
+/* ---- Corner tags --------------------------------------------------------
+   Two pills over the cover, in the same uppercase micro-label voice as the
+   section eyebrows and the timeline periods: when the project was made on the
+   left, where it was made on the right. Up here rather than in the text block
+   so they cost the title no line, and they share one rule so the pair can
+   never drift apart. */
+.projectDate,
+.projectFlag {
     position: absolute;
     top: 16px;
-    left: 16px;
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -89,6 +90,14 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     line-height: 1;
+}
+
+.projectDate {
+    left: 16px;
+}
+
+.projectFlag {
+    right: 16px;
 }
 
 .projectDate svg {
@@ -181,6 +190,16 @@
     .projectBox {
         aspect-ratio: auto;
         min-height: 300px;
+    }
+
+    /* The date and the country grow toward each other, and a card this narrow
+       is where they would meet. */
+    .projectDate,
+    .projectFlag {
+        gap: 6px;
+        padding: 6px 10px;
+        font-size: 0.64rem;
+        letter-spacing: 0.1em;
     }
 }
 

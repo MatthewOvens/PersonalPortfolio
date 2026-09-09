@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ProjectChapter, ProjectData } from '../assets/data/ProjectsData';
 import { formatProjectDate } from '../utils/projectDates';
 import { setScrollTarget } from '../utils/scrollTarget';
+import Flag from './Flag';
 import './ProjectDialog.css';
 
 interface ProjectDialogProps {
@@ -83,7 +84,21 @@ const ProjectDialog = ({ show, onHide, projectData }: ProjectDialogProps) => {
 
     if (!projectData) return null;
 
-    const meta = [formatProjectDate(projectData.date), projectData.role, projectData.location].filter(Boolean);
+    // Keyed by role rather than by value: the location now carries a flag
+    // alongside its text, so the item is no longer a plain string.
+    const meta = [
+        { key: 'date', node: formatProjectDate(projectData.date) },
+        ...(projectData.role ? [{ key: 'role', node: projectData.role }] : []),
+        {
+            key: 'location',
+            node: (
+                <>
+                    <Flag country={projectData.country} className='flagOnDark' />
+                    {projectData.location}
+                </>
+            ),
+        },
+    ];
 
     return (
         <Modal
@@ -131,9 +146,9 @@ const ProjectDialog = ({ show, onHide, projectData }: ProjectDialogProps) => {
                         <h2 className='projectHeroTitle' id='projectDialogTitle'>{projectData.title}</h2>
                         <p className='projectHeroMeta'>
                             {meta.map((item, index) => (
-                                <span key={item}>
+                                <span className='metaItem' key={item.key}>
                                     {index > 0 && <span className='metaDot' aria-hidden='true'>·</span>}
-                                    {item}
+                                    {item.node}
                                 </span>
                             ))}
                         </p>

@@ -1,5 +1,6 @@
 import "./Projects.css";
 import { ProjectData } from "../assets/data/ProjectsData";
+import Flag, { countryNames } from "./Flag";
 import { formatProjectDate, projectsByDate } from "../utils/projectDates";
 import ProjectDialog from "./ProjectDialog";
 import { useState } from "react";
@@ -24,6 +25,14 @@ const ProjectCard = ({ project, onOpen }: { project: ProjectData; onOpen: () => 
     <span className="projectDate">
       <CalendarIcon />
       {formatProjectDate(project.date)}
+    </span>
+
+    {/* Balances the date across the top of the cover: when it was made on the
+        left, where it was made on the right. The flag is decorative here, the
+        name beside it is what gets read out. */}
+    <span className="projectFlag">
+      <Flag country={project.country} decorative />
+      {countryNames[project.country]}
     </span>
 
     <div className="projectTxt">

@@ -72,28 +72,28 @@ const projectData: ProjectData[] = [{
         concept: {
             text: "Navia is the software that drives EXRAY, Hydromea's wireless underwater inspection ROV. My thesis covered its two operating screens, the Pilot Page, redesigned and rebuilt, and the Inspector Page, designed from scratch for the person who documents the dive while the pilot flies.",
             points: [
-                "Operators found the existing interface unreliable, inconsistent and hard to read mid-dive",
-                "The existing interface was messy, therefore challenging to understand and memorize",
-                "Everything had to stay usable on a touchscreen, in the field, alongside a physical remote"
+                "Pilots read the screen mid dive, so anything unclear costs time the drone is spending underwater",
+                "The interface had grown by accretion, inconsistent enough that controls had to be hunted for rather than remembered",
+                "Everything had to stay usable on a touchscreen, in the field, next to a physical remote"
             ],
             image: naviaHeader
         },
         how: {
-            text: "The whole frontend system is Python with PyQt, laid out in Qt Designer and structured as MVC. Telemetry reaches the station as MAVLink messages over UDP, gets filtered and dispatched, then feeds the widgets in real time through Qt signals.",
+            text: "Research first, then a rebuild. A heuristic evaluation surfaced the first problems, then an offsite test day with a challenge to perform with the drones and the think aloud method to retrieve data out of it. What came back set the priorities for the rest of the project.",
             points: [
-                "Built the Pilot Page widgets, notification centre, camera settings, dive checklist, HUD menu and mission panels",
-                "Redesigned the whole Pilot Page to prevent elements to fight for space, making everything more consistent, accessible and user friendly",
-                "Rewired feedback system around the backend worker threads, so downloads and post-processing report real progress",
-                "Added a theme system that injects light or dark colour values into the stylesheets at startup"
+                "Sessions with the pilots who dive EXRAY for a living, and brainstorming with the team",
+                "Redesigned the Pilot Page so elements stop fighting for space, then rebuilt its widgets, checklist, HUD menu and mission panels",
+                "Python and PyQt in an MVC structure, MAVLink telemetry over UDP reaching the widgets through Qt signals",
+                "A theme system injecting light or dark values into the stylesheets at startup"
             ],
             image: naviaPilot
         },
         learnings: {
-            text: "An heuristic evaluation with the software team surfaced the first round of problems, then an offsite day at the lake put around thirty colleagues on the controls, each one piloting for five minutes before passing on.",
+            text: "Underwater the pilot has no view except the one the software gives them, so every widget competes for the attention the drone needs. Most of the redesign was deciding what earns a permanent place on screen and what should only appear when it matters.",
             points: [
-                "A persona and a timed challenge got colleagues thinking like inspectors, not like engineers",
-                "A guided think aloud works better than the textbook version when the hands are busy flying",
-                "Brainstorming sessions with the team as a consistent way to get good and novel ideas"
+                "Consistency is a memory feature, once the same control looked the same everywhere people stopped searching for it",
+                "A guided think aloud works better than the textbook version when the hands are busy flying, and a persona is what gets an engineer to behave like an inspector",
+                "Designing and building the same screen removes the handoff, every layout idea has to survive Qt before it ships and the ones that do are usually the simpler ones"
             ],
             image: naviaOffsite
         },

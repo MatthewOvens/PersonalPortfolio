@@ -118,11 +118,11 @@ const projectData: ProjectData[] = [{
             image: tuneCrafterHUD
         },
         how: {
-            text: "React reads **two live signals at once**, hand landmarks from the webcam and words from the microphone, and turns them into calls on a **Web Audio** engine drawn as a waveform.",
+            text: "React reads **two live signals at once**, hand landmarks from the webcam and words from the microphone, and turns them into calls on a **Web Audio** engine drawn as a waveform. which controls the music.",
             points: [
                 "**MediaPipe** reads the pose, a **state machine** per control decides when it counts as a command",
                 "**Pinch** a finger and its drum pad fires, **scissor gestures** cut loop regions out of the track",
-                "The **voice** handles what hands are bad at, play, record and loop, so nothing has to be mimed"
+                "**Voice controls** handles all the functions to control the music as well thanks to the Web Speech API, detecting specific words."
             ]
         },
         learnings: {

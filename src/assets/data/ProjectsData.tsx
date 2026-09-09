@@ -73,31 +73,31 @@ const projectData: ProjectData[] = [{
             text: "Navia is the software that drives EXRAY, Hydromea's wireless underwater inspection ROV. My thesis covered its two operating screens, the Pilot Page, redesigned and rebuilt, and the Inspector Page, designed from scratch for the person who documents the dive while the pilot flies.",
             points: [
                 "Operators found the existing interface unreliable, inconsistent and hard to read mid-dive",
-                "Client policy blocked any direct contact with the real operators for the whole internship",
+                "The existing interface was messy, therefore challenging to understand and memorize",
                 "Everything had to stay usable on a touchscreen, in the field, alongside a physical remote"
             ],
             image: naviaHeader
         },
         how: {
-            text: "The whole system is Python with PyQt, laid out in Qt Designer and structured as MVC. Telemetry reaches the station as MAVLink messages over UDP, gets filtered and dispatched, then feeds the widgets in real time through Qt signals and slots.",
+            text: "The whole frontend system is Python with PyQt, laid out in Qt Designer and structured as MVC. Telemetry reaches the station as MAVLink messages over UDP, gets filtered and dispatched, then feeds the widgets in real time through Qt signals.",
             points: [
                 "Built the Pilot Page widgets, notification centre, camera settings, dive checklist, HUD menu and mission panels",
-                "Merged the two drone panels into one, so the Mothership and the Flyout stop fighting for space",
-                "Rewired the Data Page feedback around the backend worker threads, so downloads and post-processing report real progress",
+                "Redesigned the whole Pilot Page to prevent elements to fight for space, making everything more consistent, accessible and user friendly",
+                "Rewired feedback system around the backend worker threads, so downloads and post-processing report real progress",
                 "Added a theme system that injects light or dark colour values into the stylesheets at startup"
             ],
             image: naviaPilot
         },
         learnings: {
-            text: "With the real operators out of reach, I built my own users. A heuristic evaluation with the software team surfaced the first round of problems, then an offsite day at the lake put around thirty colleagues on the controls, each one piloting for five minutes before passing on.",
+            text: "An heuristic evaluation with the software team surfaced the first round of problems, then an offsite day at the lake put around thirty colleagues on the controls, each one piloting for five minutes before passing on.",
             points: [
                 "A persona and a timed challenge got colleagues thinking like inspectors, not like engineers",
                 "A guided think aloud works better than the textbook version when the hands are busy flying",
-                "The sonar map, the 4-clicks measurement and the annotated gallery all came out of a brainstorming poster"
+                "Brainstorming sessions with the team as a consistent way to get good and novel ideas"
             ],
             image: naviaOffsite
         },
-        acquired_skills: ["Python", "PyQt", "Qt Designer", "QSS", "MVC", "MAVLink", "Figma", "Heuristic evaluation", "Think aloud", "Personas", "User research", "UI design"]
+        acquired_skills: ["Python", "PyQt", "Qt Designer", "MVC", "MAVLink", "Figma", "Heuristic evaluation", "Think aloud testing", "Personas", "User research", "UI design"]
     },
     {
         title: "Tune Crafter",

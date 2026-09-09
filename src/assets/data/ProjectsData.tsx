@@ -73,7 +73,7 @@ const projectData: ProjectData[] = [{
             text: "Navia is the software that drives **EXRAY**, Hydromea's wireless underwater inspection ROV. My thesis covered its two operating screens, the **Pilot Page**, redesigned and rebuilt, and the **Inspector Page**, designed from scratch for the person who documents the dive while the pilot flies.",
             points: [
                 "Pilots read the screen **mid dive**, so anything unclear costs time the drone is spending underwater",
-                "The interface had grown by accretion, **inconsistent** enough that controls had to be hunted for rather than remembered",
+                "The interface had grown **inconsistent** enough that controls had to be hunted for rather than remembered",
                 "Everything had to stay usable on a **touchscreen**, in the field, next to a physical remote"
             ],
             image: naviaHeader
@@ -81,7 +81,7 @@ const projectData: ProjectData[] = [{
         how: {
             text: "Research first, then a rebuild. A **heuristic evaluation** surfaced the first problems, then an **offsite test day** with a challenge to perform with the drones and the **think aloud** method to retrieve data out of it. What came back set the priorities for the rest of the project.",
             points: [
-                "**Sessions with the pilots** who dive EXRAY for a living, and **brainstorming** with the team",
+                "**User reseach** with the actual Pilots and with the team",
                 "**Redesigned the Pilot Page** so elements stop fighting for space, then rebuilt its widgets, checklist, HUD menu and mission panels",
                 "**Python and PyQt** in an MVC structure, **MAVLink** telemetry over UDP reaching the widgets through Qt signals",
                 "A **theme system** injecting light or dark values into the stylesheets at startup"
@@ -93,7 +93,7 @@ const projectData: ProjectData[] = [{
             points: [
                 "**Consistency is a memory feature**, once the same control looked the same everywhere people stopped searching for it",
                 "A guided think aloud works better than the textbook version when the **hands are busy flying**, and a persona is what gets an engineer to behave like an inspector",
-                "Designing and building the same screen **removes the handoff**, every layout idea has to survive Qt before it ships and the ones that do are usually the simpler ones"
+                "**Brainstorming with a multidisciplinary team** beats solving alone, engineers, designers, stakeholders read the same problem differently, and the solution that survives all three is usually the right one"
             ],
             image: naviaOffsite
         },

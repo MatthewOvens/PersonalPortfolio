@@ -109,11 +109,12 @@ const projectData: ProjectData[] = [{
         image: [tuneCrafterHeader, tuneCrafterHUD, tuneCrafterLogo],
         link: "https://allescava.github.io/Tune-Crafter/",
         concept: {
-            text: "A university project for the course Advanced Programming of Interactive Systems. Tune Crafter is a **loop station** that runs in the browser and is **played in the air** in front of the laptop: the webcam watches the hands, the microphone takes the commands, and a track is built up live out of pads, loops and cuts **without the machine ever being touched**.",
+            text: "A university project for the course Advanced Programming of Interactive Systems. Tune Crafter is a **loop station** that runs in the browser and is **played in the air** in front of the laptop.",
             points: [
-                "A **drum pad** sits on each fingertip, pinched against the thumb to fire it",
-                "Loops are **recorded, layered and cut while they run**, the waveform on screen is the track as it stands",
-                "**The interface is the hand itself**, so the screen can stay on the music rather than on controls"
+                "The webcam watches the hands and the microphone stays open, a pose becomes a command and a spoken word becomes another",
+                "The **left hand** is a drum kit, a pad on every fingertip, pinched against the thumb to fire it",
+                "The **right hand** is the desk to start and stop the track, set the volume, control the pitch of the music or create loops",
+                "All functions can be done through the **voice** as well"
             ],
             image: tuneCrafterHUD
         },

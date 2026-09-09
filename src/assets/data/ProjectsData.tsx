@@ -185,7 +185,7 @@ const projectData: ProjectData[] = [{
         image: [ecolensHeader, ecolensCleanup, ecolensSea],
         link: "https://youtu.be/D6IYETO00yg",
         concept: {
-            text: "A headset piece about pollution that **argues instead of lecturing**. Three littered landscapes, a forest, a mountain and a seabed, and a switch strapped to your hand that shows the same place in the **past, the present and the future**. Built with Doaa Hussien and Abel Henry-Lapassat for Advanced Immersive Interaction.",
+            text: "A **Virtual Reality** game from a school project for the course 'Advanced Immersive Interaction'. The purpose of the project was to make a VR game that talkes about sostainability. Three littered landscapes, a forest, a mountain and a seabed, and a switch strapped to your hand that shows the same place in the **past, the present and the future**.",
             points: [
                 "The argument had to come **from the world itself**, not from a panel of statistics",
                 "Playable by someone putting on a headset **for the first time**",

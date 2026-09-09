@@ -22,7 +22,7 @@ import hostownTrust from '../images/hostowntrust.jpg';
 
 /** One of the three chapters every case study is told through. */
 export interface ProjectChapter {
-    /** Lead paragraph of the chapter. */
+    /** Body of the chapter. A blank line (two newlines) starts a new paragraph. */
     text: string;
     /** Optional bullets: constraints for Concept, steps for How, takeaways for Learnings. */
     points?: string[];
@@ -220,21 +220,17 @@ const projectData: ProjectData[] = [{
         country: "FI",
         date: "2024",
         role: "UX Design, team of 7",
-        description: "The app that came out of proving the brief wrong",
+        description: "A summer school team brief, answered by proving it wrong",
         image: [hostownHeader, hostownMap, hostownTrust],
         concept: {
-            text: "The City of Espoo asked for a VR tour of the Aalto campus, to **attract** international talent to Finland. The research said Finland has no trouble attracting talent, it has trouble **keeping** it: people arrive, find nothing to do after six in the evening, and leave. HosTown answers that instead, an app for **hosting and joining small local events**.",
-            points: [
-                "The brief handed to us was **a solution**, and the problem underneath it was never stated",
-                "Aalto is already a quarter international, so attraction was not the bottleneck",
-                "Meeting in person was the whole point, so the app had to **get out of the way**"
-            ],
+            text: "A **two week team project** at the EIT Digital Summer School in Helsinki, where seven of us were handed the same brief by the City of Espoo: a digital product to **attract** international talent to Finland.\n\nOur research found out Finland has no trouble attracting talent, it has trouble **keeping** it. HosTown answers that instead, an app for **hosting and joining small local events**.",
             image: hostownHeader
         },
         how: {
-            text: "**Two weeks, seven people**, from a first survey to a clickable **Figma prototype**. The team split between research and finance, and I took the product design with Emanuele.",
+            text: "From the first survey to a clickable **Figma prototype** in ten working days, closing with a **pitch back to the city**, business model included. The team split into research, business and product.",
             points: [
                 "**Surveys and interviews** with international students, then **5 Whys** to get under the answers",
+                "Researchers, the **student union** and the founder of a competing app, to check the problem was real before proposing another one",
                 "**Two personas**, the host and the joiner, drawn from what came back",
                 "**A map as the entry point**, so events are found by where you already are",
                 "**Reliability, rating and credits as one system**, earned through challenges, so strangers can meet safely"
@@ -242,11 +238,11 @@ const projectData: ProjectData[] = [{
             image: hostownMap
         },
         learnings: {
-            text: "The hard part was **throwing away a brief a city had already committed to**, and having enough evidence to make that defensible rather than an opinion. Talking to researchers, to the student union and to the founder of a competing app is what bought us **the right to say no**.",
+            text: "We were handed a solution and gave back a problem, and the two weeks in between are where the learning sits. The design only started once we could say, with evidence behind it, what we were actually solving.",
             points: [
-                "A client asking for a solution is **still describing a problem, only badly**",
-                "Safety between strangers is an **interface problem before it is a policy one**",
-                "**Research you cannot show is research you cannot defend**"
+                "**Trust is an interface, not a policy**, reviews from real people you can see on the app beat any promise of safety",
+                "**Validate before you draw**, a survey and a week of interviews is what stopped us from prototyping the wrong thing",
+                "**Ask the people you are building for**, the students, the student union, the city, a founder already in that market: every turn the project took came out of a conversation, none out of the whiteboard"
             ],
             image: hostownTrust
         },

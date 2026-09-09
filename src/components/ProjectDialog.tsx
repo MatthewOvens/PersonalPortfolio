@@ -51,7 +51,11 @@ const Chapter = ({
         </header>
 
         <div className='chapterText'>
-            <p className='chapterParagraph'>{renderRichText(chapter.text)}</p>
+            {/* A blank line in the data starts a new paragraph, so a chapter can
+                open on one thought and land on another without a bullet. */}
+            {chapter.text.split(/\n{2,}/).map((paragraph, i) => (
+                <p className='chapterParagraph' key={i}>{renderRichText(paragraph)}</p>
+            ))}
             {chapter.points && chapter.points.length > 0 && (
                 <ul className='chapterPoints'>
                     {chapter.points.map((point) => (

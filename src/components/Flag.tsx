@@ -22,6 +22,14 @@ const countryNames: Record<CountryCode, string> = {
     IT: 'Italy',
 };
 
+/** ISO 3166-1 alpha-3, what the card chip shows next to the flag. */
+const countryAbbr: Record<CountryCode, string> = {
+    CH: 'CHE',
+    FR: 'FRA',
+    FI: 'FIN',
+    IT: 'ITA',
+};
+
 const flags: Record<CountryCode, JSX.Element> = {
     // Three equal bands.
     FR: (
@@ -86,5 +94,5 @@ const Flag = ({
     </span>
 );
 
-export { countryNames };
+export { countryNames, countryAbbr };
 export default Flag;

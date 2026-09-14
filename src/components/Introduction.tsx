@@ -7,7 +7,7 @@ interface IntroductionProps {
   onToggleHandNav: () => void;
 }
 
-const roles = ['Frontend Developer', 'UX Designer', 'Interaction Designer', 'Creative Innovator'];
+const roles = ['Frontend Developer', 'UX Designer', 'UI developer', 'Interaction Designer'];
 // One long strip, rendered twice back to back so the -50% loop is seamless.
 // The join uses a non-breaking space: a trailing normal space would be
 // collapsed at the end of the inline-block and break the loop seam.

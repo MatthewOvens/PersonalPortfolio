@@ -1,43 +1,35 @@
-.contactCta {
-    display: inline-block;
-    background-color: var(--accent);
+/* Two peer actions: neither outranks the other, so they share one quiet resting
+   style and the hover only warms the outline and the label. */
+.contactActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+.contactButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 190px;
+    justify-content: center;
+    padding: 0.85em 2em;
+    border: 1px solid var(--line-light);
+    border-radius: 999px;
+    background-color: transparent;
     color: var(--ink);
     font-weight: 600;
-    padding: 0.85em 2.2em;
-    border-radius: 999px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.contactCta:hover {
-    color: var(--ink);
-    background-color: var(--accent-strong);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(255, 160, 0, 0.35);
-}
-
-.socials {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    padding-top: 44px;
-}
-
-.socials a {
-    color: var(--ink);
-    display: inline-flex;
-    padding: 12px;
-    border-radius: 50%;
-    transition: color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
-}
-
-.socials a:hover {
+.contactButton:hover,
+.contactButton:focus-visible {
     color: var(--accent-strong);
-    background-color: var(--accent-soft);
-    transform: translateY(-3px);
+    border-color: rgba(255, 160, 0, 0.55);
 }
 
-.socialIcon {
-    width: 30px;
-    height: 30px;
+.contactIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
 }

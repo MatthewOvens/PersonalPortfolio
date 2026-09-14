@@ -6,7 +6,11 @@
     gap: clamp(40px, 6vw, 90px);
     width: min(1140px, 100% - 48px);
     margin: 0 auto;
+    /* svh is the viewport with the mobile browser chrome showing. Plain vh is
+       the *large* viewport there, which makes the hero taller than what is
+       actually on screen and pushes its own content out of view. */
     min-height: 100vh;
+    min-height: 100svh;
     padding-top: 72px;
     box-sizing: border-box;
     position: relative;
@@ -77,7 +81,7 @@
 
 .heroTitle {
     margin: 0 0 1.1rem;
-    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    font-size: clamp(2.125rem, 1.24rem + 3.95vw, 4.2rem);
 }
 
 .heroName {
@@ -105,11 +109,20 @@
     to { stroke-dashoffset: 0; }
 }
 
+/* One readable line on a laptop, two even ones on a phone. It is never held on
+   a single line by force: at 360px that would mean ~15px type, smaller than the
+   body text around it. Instead it is simply never allowed to leave the box. */
 .heroLede {
     color: var(--light-muted);
-    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    font-size: clamp(1rem, 0.86rem + 0.62vw, 1.25rem);
     line-height: 1.6;
     margin: 0 0 1.8rem;
+    max-width: 100%;
+    /* Splits a word rather than letting it stick out, whatever the copy becomes. */
+    overflow-wrap: break-word;
+    /* Evens the two lines out when it does wrap, instead of leaving one word
+       stranded on the second line. */
+    text-wrap: balance;
 }
 
 .infiniteSliderContainer {
@@ -208,6 +221,22 @@
     .handRecInfo {
         right: 24px;
         bottom: 24px;
+    }
+}
+
+@media (max-width: 640px) {
+    .containerIntro {
+        width: calc(100% - 32px);
+        padding-bottom: 120px;
+    }
+
+    .heroEyebrow {
+        letter-spacing: 0.16em;
+    }
+
+    .handRecInfo {
+        right: 16px;
+        bottom: 16px;
     }
 }
 

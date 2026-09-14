@@ -36,6 +36,7 @@ button:hover {
 
 .introduction {
   min-height: 100vh;
+  min-height: 100svh;
   color: var(--light);
   background:
     radial-gradient(1000px 520px at 85% -10%, rgba(255, 160, 0, 0.13), transparent 60%),
@@ -69,6 +70,35 @@ button:hover {
   border-top: 1px solid var(--line-dark);
 }
 
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px 20px;
+  width: min(1200px, 100% - 48px);
+  margin: 0 auto;
+  padding: 22px 0;
+  font-size: 0.9rem;
+}
+
+/* Phone widths: the sections drop to the same 16px gutter as the navbar, so
+   every block on the page starts on one vertical line, and the 110px section
+   rhythm stops eating most of a small screen. */
+@media (max-width: 640px) {
+  .projects,
+  .journey,
+  .contacts {
+    padding: 72px 16px;
+  }
+
+  .footerInner {
+    width: calc(100% - 32px);
+    justify-content: center;
+    text-align: center;
+  }
+}
+
 /* Above every overlay on the page, Bootstrap's modals included (backdrop 1050,
    modal 1055): the tracked hand has to stay visible over whatever it is being
    used to navigate — the project case-study dialog above all. */
@@ -76,10 +106,7 @@ button:hover {
   position: fixed;
   z-index: 2000;
   pointer-events: none; /* Let clicks/hover pass through to the page below */
-  width: 100vw;
-  height: 100vh;
-  top: 0px;
-  right: 0px;
+  inset: 0;
   margin: 0 auto;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);

@@ -30,7 +30,7 @@ const Introduction = ({ handNavActive, onToggleHandNav }: IntroductionProps) => 
             </svg>
           </span>
         </h1>
-        <p className='heroLede'>I design and build interactive experiences for the web.</p>
+        <p className='heroLede'>I design and build interactive experiences.</p>
         <div className="infiniteSliderContainer">
           <div className="infiniteSliderTrack">
             <span className='infiniteSlider'>{marqueeText}</span>

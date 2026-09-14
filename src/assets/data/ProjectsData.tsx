@@ -147,33 +147,33 @@ const projectData: ProjectData[] = [{
         image: [snacmanHeader, snacman2, snacman3],
         link: "https://matthewovens.github.io/SnakeMan/",
         concept: {
-            text: "An arcade classic rebuilt for the browser, with the goal of making the whole game playable in a **single tab**, with **no install and no account**.",
+            text: "Two arcade classics in one. The rules are **Snake**, the costume is **Pac-Man**: the body behind you is a trail of pellets, and what you chase is a **blue ghost**.",
             points: [
-                "Playable on **desktop and mobile** with the same code base",
-                "**Readable at a glance**: one screen, no menus to learn",
-                "Fast to pick up, hard to put down"
+                "**Pure JavaScript**, no framework, no build step, no dependencies",
+                "One screen, one control, the arrow keys",
+                "**Easy, Normal or Hard**, the only setting in the game"
             ],
             image: snacmanHeader
         },
         how: {
-            text: "The **game loop** runs on a canvas driven by **requestAnimationFrame**, while React handles everything around it, score, state and the screens between runs.",
+            text: "The board is a **19 by 19 CSS Grid** and every piece of the snake is a **div** on a cell, so the whole game is DOM and stylesheet. Files split **MVC**: model holds the snake and the ghost, views draw the screens, controller owns the keyboard and the clock.",
             points: [
-                "**Grid-based movement** with collision checks on every tick",
-                "One **input layer** mapping both keyboard and swipe gestures",
-                "Score and progression persisted locally between sessions"
+                "The clock is a **setInterval** whose delay is the difficulty, 150ms down to 50ms",
+                "Each key **restarts the interval**, so a turn lands on the spot",
+                "**Direction flags** refuse the 180 degree turn"
             ],
             image: snacman2
         },
         learnings: {
-            text: "Building the loop by hand made **the cost of every frame** visible, and pushed most of the work **out of React** and into plain state the renderer could read.",
+            text: "First game loop built with nothing under it. Without a framework there is **no place to hide state**, which is what made the MVC split earn its keep.",
             points: [
-                "Separating **game state from UI state** keeps re-renders cheap",
-                "**Touch input needs its own timing model**, not a mouse fallback",
-                "**Playtesting early** beats tuning numbers in isolation"
+                "**Redrawing the whole board every tick** is naive and, at 361 cells, free",
+                "A timer is a **blunt game clock**, restarting it on input is a trick, not a design",
+                "Browsers **will not autoplay audio**, the menu music waits for the first click"
             ],
             image: snacman3
         },
-        acquired_skills: ["React", "TypeScript", "Canvas", "CSS", "Game loop", "Responsive design", "Git"]
+        acquired_skills: ["JavaScript", "ES modules", "CSS Grid", "DOM manipulation", "MVC", "Game loop", "GitHub Pages", "Git"]
     },
     {
         title: "EcoLens",
@@ -219,8 +219,8 @@ const projectData: ProjectData[] = [{
         location: "EIT Digital Summer School - Helsinki, Finland",
         country: "FI",
         date: "2024",
-        role: "UX Design, team of 7",
-        description: "A summer school team brief, answered by proving it wrong",
+        role: "Prototyping & Business Modelling",
+        description: "A summer school project, to pitched prototype and business model",
         image: [hostownHeader, hostownMap, hostownTrust],
         concept: {
             text: "A **two week team project** at the EIT Digital Summer School in Helsinki, where seven of us were handed the same brief by the City of Espoo: a digital product to **attract** international talent to Finland.\n\nOur research found out Finland has no trouble attracting talent, it has trouble **keeping** it. HosTown answers that instead, an app for **hosting and joining small local events**.",

@@ -1,5 +1,6 @@
 import './Introduction.css';
 import handwrittenHint from '../assets/text1.svg';
+import profilePicture from '../assets/images/profile.jpg';
 
 interface IntroductionProps {
   handNavActive: boolean;
@@ -16,7 +17,7 @@ const Introduction = ({ handNavActive, onToggleHandNav }: IntroductionProps) => 
   return (
     <div className='containerIntro'>
       <div className='personalImg'>
-        <img src="https://avatars.githubusercontent.com/u/83605999?v=4" alt="profile" className="profilePicture"/>
+        <img src={profilePicture} alt="Matteo Fornara" className="profilePicture"/>
       </div>
       <div className='presentation'>
         <span className='heroEyebrow'>Nice to meet you</span>

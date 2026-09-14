@@ -33,6 +33,21 @@
     to   { transform: rotate(360deg); }
 }
 
+/* Soft fade so the photo edge melts into the page instead of ending on a hard rim. */
+.personalImg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(
+        circle at 50% 46%,
+        rgba(28, 32, 39, 0) 58%,
+        rgba(28, 32, 39, 0.35) 82%,
+        rgba(28, 32, 39, 0.85) 100%
+    );
+}
+
 .profilePicture {
     width: min(300px, 62vw);
     aspect-ratio: 1;

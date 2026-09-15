@@ -130,6 +130,27 @@ button:hover {
   display: none; /* shown only while a hand is tracked */
 }
 
+/* Shown when the browser refuses the new tab a hand click asked for: a synthetic
+   click carries no user activation, so the popup blocker steps in. */
+.hand-link-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  max-width: min(90vw, 470px);
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 2px solid #FFDB58;
+  background-color: rgba(24, 8, 28, 0.94);
+  color: #fff;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none; /* never steals a hand click from the page */
+  z-index: 2002; /* above the cursor — see .hand-cursor */
+  display: none; /* shown only while a link is waiting */
+}
+
 .hand-cursor.clicking {
   transform: translate(-50%, -50%) scale(0.65);
   background-color: #B01EB0;

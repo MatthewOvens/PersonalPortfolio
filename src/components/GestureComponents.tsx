@@ -46,6 +46,10 @@ const FRAME_INTERVAL = 1000 / TARGET_FPS;
 const MENU_ENTER_RATIO = 0.16;
 const MENU_EXIT_RATIO = 0.30;
 
+// How long a link the popup blocker refused stays pending, waiting for a real
+// interaction to open it (see followLink).
+const PENDING_LINK_TIMEOUT = 15000;
+
 const GestureComponent = (props: GestureComponentProps) => {
     const video = props.video;
 
@@ -82,6 +86,11 @@ const GestureComponent = (props: GestureComponentProps) => {
 
     // The on-screen cursor element that follows the hand.
     const cursorRef = useRef<HTMLDivElement>(null);
+
+    // A link whose new tab the browser refused, kept until a real interaction
+    // can open it (see followLink), plus the on-screen notice that says so.
+    const pendingLinkRef = useRef<{ handler: (event: Event) => void; timer: number } | null>(null);
+    const hintRef = useRef<HTMLDivElement>(null);
 
     // The fixed top navbar (looked up lazily) and whether it's currently dropped
     // down toward the hand, so we only touch the DOM on state changes.
@@ -121,6 +130,7 @@ const GestureComponent = (props: GestureComponentProps) => {
                 cancelAnimationFrame(rafIdRef.current);
                 rafIdRef.current = null;
             }
+            clearPendingLink();
             // Hand navigation turned off: leave the navbar in its resting state.
             document.querySelector(".mynavbar")?.classList.remove("reachable");
         };
@@ -459,15 +469,128 @@ const GestureComponent = (props: GestureComponentProps) => {
         const target = document.elementFromPoint(x, y) as HTMLElement | null;
         if (!target) return;
 
+        // A link that opens in a new tab needs special handling (see followLink):
+        // the browser would silently swallow it, so we suppress the anchor's own
+        // navigation and do it ourselves after the click has been delivered.
+        const link = target.closest?.("a[href]") as HTMLAnchorElement | null;
+        const opensNewTab = !!link && link.target === "_blank";
+
         const opts: MouseEventInit = { bubbles: true, cancelable: true, clientX: x, clientY: y, view: window };
         target.dispatchEvent(new MouseEvent("mousedown", opts));
         target.dispatchEvent(new MouseEvent("mouseup", opts));
-        target.dispatchEvent(new MouseEvent("click", opts));
+
+        const suppressNavigation = (event: Event) => event.preventDefault();
+        if (opensNewTab) {
+            // Capture phase, so it runs before any page handler and cancels the
+            // anchor's default action for this one dispatch only.
+            window.addEventListener("click", suppressNavigation, true);
+        }
+        try {
+            target.dispatchEvent(new MouseEvent("click", opts));
+        } finally {
+            window.removeEventListener("click", suppressNavigation, true);
+        }
+
+        if (opensNewTab && link) followLink(link);
+    }
+
+    /**
+     * Open a URL in a new tab. Returns false when the browser refused.
+     *
+     * No features string is passed, so this is a plain tab like a normal click
+     * gives. "noopener" can't go in there: it makes window.open return null even
+     * when the tab did open, which would make a refusal impossible to tell apart
+     * from a success, so the opener is severed by hand instead.
+     */
+    const openNewTab = (href: string) => {
+        let opened: Window | null = null;
+        try {
+            opened = window.open(href, "_blank");
+        } catch {
+            opened = null;
+        }
+        if (!opened) return false;
+
+        try {
+            opened.opener = null;
+        } catch {
+            // Cross-origin and already isolated; nothing to sever.
+        }
+        return true;
+    }
+
+    /**
+     * Follow a target="_blank" link clicked with the hand.
+     *
+     * The click we dispatch is untrusted, so the page has no user activation and
+     * the popup blocker may refuse the tab (this is why LinkedIn did nothing).
+     * We still ask for the tab, and when it is refused we hold the link instead
+     * of hijacking the current one: the visitor's next real click or key press
+     * restores activation and opens it, in a new tab as expected.
+     */
+    const followLink = (link: HTMLAnchorElement) => {
+        const href = link.href;
+        if (!href) return;
+        if (openNewTab(href)) return;
+
+        queuePendingLink(href);
+    }
+
+    /** Hold a refused link until a real interaction can open it. */
+    const queuePendingLink = (href: string) => {
+        clearPendingLink();
+
+        const handler = () => {
+            clearPendingLink();
+            openNewTab(href);
+        };
+        // Capture phase, so the link opens even if the page stops the event.
+        window.addEventListener("pointerdown", handler, true);
+        window.addEventListener("keydown", handler, true);
+        // Let it expire, so a click minutes later doesn't open a tab out of
+        // nowhere for a link the visitor has moved on from.
+        const timer = window.setTimeout(clearPendingLink, PENDING_LINK_TIMEOUT);
+        pendingLinkRef.current = { handler, timer };
+
+        showLinkHint(href);
+    }
+
+    /** Drop any held link (opened, or hand navigation turned off). */
+    const clearPendingLink = () => {
+        const pending = pendingLinkRef.current;
+        if (pending) {
+            window.removeEventListener("pointerdown", pending.handler, true);
+            window.removeEventListener("keydown", pending.handler, true);
+            window.clearTimeout(pending.timer);
+            pendingLinkRef.current = null;
+        }
+        showLinkHint(null);
+    }
+
+    /** Tell the visitor the tab was blocked, so the click never looks ignored. */
+    const showLinkHint = (href: string | null) => {
+        const el = hintRef.current;
+        if (!el) return;
+
+        if (!href) {
+            el.style.display = "none";
+            return;
+        }
+
+        let label = href;
+        try {
+            label = new URL(href).hostname.replace(/^www\./, "");
+        } catch {
+            // Not a parseable URL: fall back to showing it as it is.
+        }
+        el.textContent = `Your browser blocked the new tab. Click anywhere with your mouse to open ${label}.`;
+        el.style.display = "block";
     }
 
     return (
         <>
             <div ref={cursorRef} className="hand-cursor" />
+            <div ref={hintRef} className="hand-link-hint" />
             <div>
                 <canvas className="output_canvas" id="output_canvas" width="1920" height="1080" />
             </div>

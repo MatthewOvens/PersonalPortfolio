@@ -1,67 +1,17 @@
+/* ==========================================================================
+   Mobile first, deliberately: the phone layout is the base and the desktop bar
+   is the override. A media query that fails to match can then only ever leave
+   the hamburger showing, never hide it.
+   ========================================================================== */
+
 .navbarcontainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    width: min(1200px, 100% - 48px);
+    width: calc(100% - 32px);
     margin: 0 auto;
-}
-
-.navlinks {
-    display: flex;
-    gap: 40px;
-}
-
-.navBarLink {
-    position: relative;
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--light);
-    opacity: 0.85;
-    padding-bottom: 4px;
-    /* Animate the hitbox growth in sync with the navbar dropping down. */
-    transition: padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                background-color 0.35s ease,
-                border-radius 0.35s ease;
-}
-
-.navBarLink:hover {
-    color: var(--light);
-    opacity: 1;
-}
-
-.navBarLink::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 2px;
-    width: 100%;
-    border-radius: 2px;
-    background-color: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.25s ease;
-}
-
-.navBarLink:hover::after {
-    transform: scaleX(1);
-}
-
-/* When the navbar drops down for hand navigation, turn each link into a large
-   padded target with a visible pill, so the hand can click anywhere near the
-   text instead of having to land precisely on it. The padding is part of the
-   anchor's box, so document.elementFromPoint (used to dispatch the click) hits
-   the whole area. */
-.mynavbar.reachable .navlinks {
-    gap: 16px;
-}
-
-.mynavbar.reachable .navBarLink {
-    padding: 16px 22px;
-    opacity: 1;
 }
 
 .my-logo {
@@ -70,12 +20,257 @@
     margin-top: 4px;
 }
 
-@media (max-width: 640px) {
+.my-logo svg {
+    width: 42px;
+    height: 38px;
+}
+
+/* ---- Hamburger -----------------------------------------------------------
+   Overrides the global accent-pill button style, which would otherwise paint an
+   orange lozenge in the bar. It keeps a soft fill and a hairline so it reads as
+   a control at a glance rather than three loose strokes. */
+.navToggle {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 1px solid var(--line-dark);
+    border-radius: 16px;
+    background-color: rgba(252, 252, 252, 0.06);
+    color: var(--light);
+    transition: background-color 0.25s ease,
+                width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.navToggle:hover,
+.navToggle:focus-visible {
+    background-color: rgba(252, 252, 252, 0.14);
+    color: var(--light);
+    transform: none;
+    box-shadow: none;
+}
+
+.navToggleBars {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 16px;
+}
+
+.navToggleBars span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background-color: currentColor;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+
+.navToggleBars span:nth-child(1) { top: 0; }
+.navToggleBars span:nth-child(2) { top: 7px; }
+.navToggleBars span:nth-child(3) { top: 14px; }
+
+/* Open: the outer bars meet in the middle and cross. */
+.navToggle[aria-expanded="true"] .navToggleBars span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.navToggle[aria-expanded="true"] .navToggleBars span:nth-child(2) {
+    opacity: 0;
+}
+
+.navToggle[aria-expanded="true"] .navToggleBars span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---- The drop-down panel -------------------------------------------------
+   Absolute, not fixed: .mynavbar carries a backdrop-filter, which makes it the
+   containing block for fixed descendants — a fixed layer would be trapped
+   inside the 72px bar instead of spanning the page. Anchored at top:100% so it
+   follows the bar down when hand navigation expands it. */
+.navlinks {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 2;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px 20px;
+    background-color: rgba(28, 32, 39, 0.97);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line-dark);
+    /* Closed. visibility and pointer-events both matter for hand navigation:
+       document.elementFromPoint must never return a panel that is off screen. */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease,
+                transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                visibility 0.25s;
+}
+
+.navlinks.isOpen {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+}
+
+/* Each row is the anchor's own box, full width and 64px tall, so a hand click
+   anywhere along it lands on the link instead of having to hit the glyphs. */
+.navBarLink {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 20px;
+    border-radius: 14px;
+    background-color: rgba(252, 252, 252, 0.04);
+    color: var(--light);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    transition: background-color 0.25s ease, color 0.25s ease,
+                min-height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                padding 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.navBarLink:hover,
+.navBarLink:focus-visible {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+}
+
+.navBackdrop {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    background-color: rgba(16, 18, 24, 0.5);
+}
+
+/* Hand navigation drops the bar toward the hand (.reachable). Everything in it
+   grows to match, so the targets stay comfortable for a tracked hand. */
+.mynavbar.reachable .navToggle {
+    width: 72px;
+    height: 72px;
+}
+
+.mynavbar.reachable .navlinks {
+    gap: 12px;
+    padding: 16px;
+}
+
+.mynavbar.reachable .navBarLink {
+    min-height: 76px;
+    padding: 0 24px;
+    font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   Desktop: the links come back inline and the hamburger goes away.
+   ========================================================================== */
+@media (min-width: 769px) {
+    .navbarcontainer {
+        width: min(1200px, 100% - 48px);
+    }
+
+    .my-logo svg {
+        width: 51px;
+        height: 46px;
+    }
+
+    .navToggle,
+    .navBackdrop {
+        display: none;
+    }
+
     .navlinks {
-        gap: 22px;
+        position: static;
+        flex-direction: row;
+        gap: 40px;
+        width: auto;
+        padding: 0;
+        background-color: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border-bottom: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
     }
 
     .navBarLink {
-        font-size: 0.85rem;
+        display: inline-block;
+        min-height: 0;
+        padding: 0 0 4px;
+        border-radius: 0;
+        background-color: transparent;
+        font-size: 0.95rem;
+        opacity: 0.85;
+        /* Animate the hitbox growth in sync with the navbar dropping down. */
+        transition: padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                    background-color 0.35s ease,
+                    border-radius 0.35s ease;
+    }
+
+    .navBarLink:hover,
+    .navBarLink:focus-visible {
+        background-color: transparent;
+        color: var(--light);
+        opacity: 1;
+    }
+
+    .navBarLink::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        width: 100%;
+        border-radius: 2px;
+        background-color: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s ease;
+    }
+
+    .navBarLink:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* The padding is part of the anchor's box, so document.elementFromPoint
+       hits the whole padded area, not just the text. */
+    .mynavbar.reachable .navlinks {
+        gap: 16px;
+    }
+
+    .mynavbar.reachable .navBarLink {
+        min-height: 0;
+        padding: 16px 22px;
+        font-size: 0.95rem;
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navlinks,
+    .navToggle,
+    .navBarLink,
+    .navToggleBars span {
+        transition: none;
     }
 }

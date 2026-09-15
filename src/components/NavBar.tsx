@@ -1,19 +1,73 @@
+import { useEffect, useState } from 'react';
 import './NavBar.css';
 
+const links = [
+  { href: '#home', label: 'Home' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#journey', label: 'Journey' },
+  { href: '#contacts', label: 'Contacts' },
+];
+
 const NavBar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+
+  // Escape closes it, and so does growing past the breakpoint: otherwise the
+  // state stays open behind the desktop layout and reappears on the next
+  // rotation back into portrait.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    const wide = window.matchMedia('(min-width: 769px)');
+    const onWide = () => {
+      if (wide.matches) setMenuOpen(false);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    wide.addEventListener('change', onWide);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      wide.removeEventListener('change', onWide);
+    };
+  }, [menuOpen]);
+
   return (
     <div className='navbarcontainer'>
-      <a className='my-logo' href="#home" aria-label="Back to top">
+      <a className='my-logo' href="#home" aria-label="Back to top" onClick={closeMenu}>
         <svg width="51" height="46" viewBox="0 0 770 700" fill="none" xmlns="http://www.w3.org/2000/svg">
           <title>Matteo Fornara</title>
           <path className='logoSign' fill="#FCFCFC" d="M222.606 692.677C171.093 688.685 118.954 671.848 79.1391 638.113C73.7333 654.36 60.6382 642.303 68.7167 628.031C59.4927 614.992 44.5549 609.173 33.849 597.544C18.1681 581.352 8.3027 560.133 4.8018 537.958C0.249703 511.555 3.53739 484.357 11.1751 458.799C10.5433 354.574 44.3655 249.904 106.56 166.2C169.151 82.6299 265.746 20.9543 370.897 11.8164C473.019 0.249863 584.486 68.1427 585.728 178.29C588.453 248.42 559.293 315.349 525.259 375.167C512.67 420.515 494.208 464.06 472.713 505.869C524.845 480.027 540.965 510.393 571.985 545.875C589.416 563.782 612.972 550.485 631.344 541.568C677.342 516.58 690.69 558.376 726.387 574.877C740.603 581.417 755.323 586.766 769.532 593.333C763.895 593.278 758.127 593.009 752.447 592.733C687.467 594.581 681.97 554.78 648.934 563.39C633.616 568.674 619.721 578.167 603.493 580.68C587.261 584.356 570.741 577.442 559.176 566.081C532.696 538.102 522.83 506.76 478.441 530.563C466.713 537.881 451.31 542.39 444.728 555.185C432.222 575.026 419.041 594.529 403.43 612.085C359.767 665.598 292.28 698.879 222.606 692.677ZM257.262 671.286C323.57 666.931 378.314 621.791 414.779 568.922C390.573 582.512 358.699 597.094 332.403 580.87C264.727 620.956 183.61 646.898 104.661 632.811C149.328 661.822 204.207 675.405 257.262 671.286ZM167.856 610.111C220.33 605.163 270.881 586.611 316.399 560.439C301.345 523.877 306.002 482.691 299.292 444.239C273.756 476.212 233.015 489.315 219.414 439.993C210.424 401.91 216.528 362.067 222.021 323.88C214.178 321.592 205.983 320.552 197.822 320.521C163.193 415.365 126.748 509.507 91.4017 604.081C116.15 611.235 142.297 612.159 167.856 610.111ZM79.0053 599.633C113.482 506.986 148.307 414.468 182.029 321.542C116.975 333.689 65.2548 387.215 38.2468 445.576C26.1978 469.387 27.8389 484.602 32.5978 509.994C38.2533 536.708 49.6249 591.962 79.0053 599.633ZM360.612 565.571C392.348 560.183 418.038 538.712 444.691 522.152C461.383 492.754 476.445 462.393 489.217 431.083C473.424 453.263 456.322 474.491 437.779 494.501C413.159 521.072 385.792 545.142 355.966 565.69C357.513 565.719 359.059 565.682 360.612 565.571ZM331.22 551.527C336.735 548.07 342.179 544.497 347.548 540.815C347.633 540.757 347.715 540.699 347.798 540.641C295.196 527.537 406.055 291.114 416.472 246.671C384.392 308.139 354.209 371.232 313.116 427.348C317.098 452.849 318.719 478.649 320.739 504.356C323.1 520.229 323.105 537.241 331.22 551.527ZM354.623 522.628C381.588 511.692 401.409 461.838 415.241 436.718C444.996 378.62 469.105 316.706 505.796 262.583C537.169 236.769 539.211 291.918 536.74 311.609C591.815 202.148 585.256 79.1734 451.388 40.2307C347.893 13.1698 237.687 60.9707 161.839 130.995C84.1343 204.662 39.2894 309.194 29.4484 415.049C62.6071 355.717 120.861 299.904 191.732 295.588C210.926 244.828 230.929 194.384 250.552 143.79C259.462 119.778 268.462 95.749 275.926 71.24C278.507 61.2395 290.267 66.9102 287.672 75.6687C270.303 151.935 253.238 228.349 239.121 305.295C277.451 323.833 299.29 364.178 308.372 404.305C369.527 312.163 416.385 211.245 468.223 113.755C473.815 104.305 483.763 114.912 479.245 122.699C442.899 203.521 417.677 288.921 386.366 371.774C373.803 411.374 340.415 482.888 349.715 522.107C351.282 522.684 352.975 522.682 354.623 522.628ZM493.674 313.299C461.211 373.741 436.113 438.04 401.553 497.319C444.189 457.465 480.096 410.803 510.287 360.954C521.561 341.947 525.693 295.891 519.691 274.462C508.344 279.293 500.402 302.583 493.674 313.299ZM253.819 453.954C271.986 450.732 284.027 434.785 295.479 421.652C287.72 384.958 270.493 346.18 235.024 329.04C231.942 355.31 214.967 451.354 253.819 453.954ZM226.298 300.139C233.236 260.925 241.672 222 250.278 183.125C240.115 209.888 229.695 236.549 219.521 263.306C215.355 274.263 211.122 285.208 206.948 296.169C213.511 296.864 220.01 298.163 226.298 300.139Z"/>
         </svg>
       </a>
-      <div className='navlinks'>
-        <a className='navBarLink' href="#home">Home</a>
-        <a className='navBarLink' href="#projects">Projects</a>
-        <a className='navBarLink' href="#journey">Journey</a>
-        <a className='navBarLink' href="#contacts">Contacts</a>
+
+      {/* Mounted only while open: a permanently present full-screen layer would
+          sit under document.elementFromPoint and swallow every hand click. */}
+      {menuOpen && <div className='navBackdrop' onClick={closeMenu} aria-hidden="true" />}
+
+      <button
+        type='button'
+        className='navToggle'
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={menuOpen}
+        aria-controls='primary-nav'
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        <span className='navToggleBars' aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </span>
+      </button>
+
+      <div id='primary-nav' className={menuOpen ? 'navlinks isOpen' : 'navlinks'}>
+        {links.map(({ href, label }) => (
+          <a key={href} className='navBarLink' href={href} onClick={closeMenu}>
+            {label}
+          </a>
+        ))}
       </div>
     </div>
   );
